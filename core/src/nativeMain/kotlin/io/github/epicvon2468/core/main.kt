@@ -28,6 +28,7 @@ import platform.posix.EXIT_SUCCESS
 import platform.posix.exit
 
 // Just some tests for GLFW interop.
+// https://www.glfw.org/docs/latest/quick_guide.html
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
 	if (!glfwInit()) {
