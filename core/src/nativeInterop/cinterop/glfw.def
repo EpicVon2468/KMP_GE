@@ -1,0 +1,4 @@
+headers = glfw3.h glfw3native.h GL/gl.h
+
+compilerOpts.linux = -I/usr/include/GLFW -I/usr/include
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -library glfw -library GL --allow-shlib-undefined
