@@ -10,11 +10,11 @@ import glfw.glfwMakeContextCurrent
 import glfw.glfwPollEvents
 import glfw.glfwSetErrorCallback
 import glfw.glfwSwapBuffers
-import glfw.glfwSwapInterval
 import glfw.glfwWindowShouldClose
 
 import io.github.epicvon2468.core.interop.glfwInit
 import io.github.epicvon2468.core.interop.glfwTerminate
+import io.github.epicvon2468.core.interop.glfwSwapInterval
 import io.github.epicvon2468.core.interop.glGetString
 
 import kotlinx.cinterop.ByteVar

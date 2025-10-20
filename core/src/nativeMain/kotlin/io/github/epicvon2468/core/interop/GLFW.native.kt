@@ -9,3 +9,5 @@ import kotlinx.cinterop.ExperimentalForeignApi
 actual inline fun glfwInit(): Boolean = glfw.glfwInit() == GLFW_TRUE
 
 actual inline fun glfwTerminate() = glfw.glfwTerminate()
+
+actual inline fun glfwSwapInterval(interval: Int) = glfw.glfwSwapInterval(interval)
