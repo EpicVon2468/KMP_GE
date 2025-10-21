@@ -14,6 +14,9 @@ import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor
 interface GLFWWindow
 
 @GLFW
+interface GLFWImage
+
+@GLFW
 expect fun glfwDefaultWindowHints()
 
 @GLFW
@@ -181,6 +184,67 @@ expect fun glfwDestroyWindow(window: GLFWWindow?)
 
 @GLFW
 expect fun glfwWindowShouldClose(window: GLFWWindow?): Boolean
+
+@GLFW
+expect fun glfwGetWindowTitle(window: GLFWWindow?): String?
+
+@GLFW
+expect fun glfwSetWindowTitle(window: GLFWWindow?, title: String?)
+
+@GLFW
+expect fun glfwSetWindowIcon(window: GLFWWindow?, count: Int, images: GLFWImage?)
+
+// void glfwGetWindowPos(GLFWWindow *window, int *xPos, int *yPos)
+
+// void glfwSetWindowPos(GLFWWindow *window, int xPos, int yPos)
+
+// void glfwGetWindowSize(GLFWWindow *window, int *width, int *height)
+
+@GLFW
+expect fun glfwSetWindowSizeLimits(
+	window: GLFWWindow?,
+	minWidth: Int,
+	minHeight: Int,
+	maxWidth: Int,
+	maxHeight: Int
+)
+
+@GLFW
+expect fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demon: Int)
+
+@GLFW
+expect fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int)
+
+// void glfwGetFramebufferSize(GLFWWindow *window, int *left, int *top, int *right, int *bottom)
+
+// void glfwGetWindowContentScale(GLFWWindow *window, float *xScale, float *yScale)
+
+@GLFW
+expect fun glfwGetWindowOpacity(window: GLFWWindow?): Float
+
+@GLFW
+expect fun glfwSetWindowOpacity(window: GLFWWindow?, opacity: Float)
+
+@GLFW
+expect fun glfwIconifyWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwRestoreWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwMaximiseWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwShowWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwHideWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwFocusWindow(window: GLFWWindow?)
+
+@GLFW
+expect fun glfwRequestWindowAttention(window: GLFWWindow?)
 
 //
 
