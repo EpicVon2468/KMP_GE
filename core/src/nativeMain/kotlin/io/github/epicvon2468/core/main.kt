@@ -4,16 +4,17 @@ import glfw.glfwSetErrorCallback
 
 import io.github.epicvon2468.core.interop.gl.glGetString
 import io.github.epicvon2468.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
+import io.github.epicvon2468.core.interop.glfw.context.glfwSwapInterval
+import io.github.epicvon2468.core.interop.glfw.context.glfwMakeContextCurrent
 import io.github.epicvon2468.core.interop.glfw.GLFWWindowC
-import io.github.epicvon2468.core.interop.glfw.glfwInit
-import io.github.epicvon2468.core.interop.glfw.glfwTerminate
-import io.github.epicvon2468.core.interop.glfw.glfwSwapInterval
 import io.github.epicvon2468.core.interop.glfw.glfwCreateWindow
-import io.github.epicvon2468.core.interop.glfw.glfwMakeContextCurrent
 import io.github.epicvon2468.core.interop.glfw.glfwPollEvents
 import io.github.epicvon2468.core.interop.glfw.glfwSwapBuffers
 import io.github.epicvon2468.core.interop.glfw.glfwWindowShouldClose
 import io.github.epicvon2468.core.interop.glfw.glfwDestroyWindow
+import io.github.epicvon2468.core.interop.glfw.init.glfwGetVersionString
+import io.github.epicvon2468.core.interop.glfw.init.glfwInit
+import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
@@ -32,6 +33,8 @@ import platform.posix.exit
 // https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
+	println("GLFW version: ${glfwGetVersionString()}")
+
 	if (!glfwInit()) {
 		println("ERROR - Failed to initialise GLFW!")
 		exit(EXIT_FAILURE)
