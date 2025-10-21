@@ -1,8 +1,4 @@
-package io.github.epicvon2468.core.interop
-
-@DslMarker
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
-annotation class GLFWWrapper
+package io.github.epicvon2468.core.interop.glfw
 
 /**
  * This function initialises the GLFW library. Before most GLFW functions can
@@ -54,7 +50,7 @@ annotation class GLFWWrapper
  *
  * @return `true` if successful, or `false` if an error occurred.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwInit(): Boolean
 
 /**
@@ -86,7 +82,7 @@ expect fun glfwInit(): Boolean
  *
  * @since Added in version 1.0.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwTerminate()
 
 /**
@@ -129,29 +125,8 @@ expect fun glfwTerminate()
  *
  * @since Added in version 1.0.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwSwapInterval(interval: Int)
-
-/**
- * This is the function pointer type for error callbacks. An error callback
- * function has the following signature:
- * ```
- * fun callbackName(error: Int, description: String?): Unit
- * ```
- *
- * **Pointer Lifetime:** The error description string is valid until the callback
- * function returns.
- *
- * @param error An error code. Future releases may add more error codes.
- * @param description A UTF-8 encoded string describing the error.
- *
- * @see error_handling
- * @see glfwSetErrorCallback
- *
- * @since Added in version 3.0.
- */
-@GLFWWrapper
-typealias GLFWErrorFun = (error: Int, description: String?) -> Unit
 
 /**
  * This function sets the error callback, which is called with an error code
@@ -193,28 +168,8 @@ typealias GLFWErrorFun = (error: Int, description: String?) -> Unit
  * @return The previously set callback, or `null` if no callback was set.
  * KMP_GE Note: Due to difficulties with C Strings, Unit is returned instead.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwSetErrorCallback(callback: GLFWErrorFun?)
-
-/**
- * Opaque window object.
- *
- * @see window_object
- *
- * @since Added in version 3.0.
- */
-@GLFWWrapper
-interface GLFWWindow
-
-/**
- * Opaque monitor object.
- *
- * @see monitor_object
- *
- * @since Added in version 3.0.
- */
-@GLFWWrapper
-interface GLFWMonitor
 
 /**
  * This function makes the OpenGL or OpenGL ES context of the specified window
@@ -254,7 +209,7 @@ interface GLFWMonitor
  *
  * @since Added in version 3.0.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwMakeContextCurrent(window: GLFWWindow?)
 
 /**
@@ -379,7 +334,7 @@ expect fun glfwMakeContextCurrent(window: GLFWWindow?)
  *
  * @since Added in version 3.0.  Replaces `glfwOpenWindow`.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwCreateWindow(
 	width: Int,
 	height: Int,
@@ -411,25 +366,19 @@ expect fun glfwCreateWindow(
  *
  * @since Added in version 3.0.  Replaces `glfwCloseWindow`.
  */
-@GLFWWrapper
+@GLFW
 expect fun glfwDestroyWindow(window: GLFWWindow?)
 
-@GLFWWrapper
+@GLFW
 expect fun glfwPollEvents()
 
-@GLFWWrapper
+@GLFW
 expect fun glfwSwapBuffers(window: GLFWWindow?)
 
-@GLFWWrapper
+@GLFW
 expect fun glfwWindowShouldClose(window: GLFWWindow?): Boolean
 
-@GLFWWrapper
-expect val GLFW_TRUE: Int
-
-@GLFWWrapper
-expect val GLFW_FALSE: Int
-
-@GLFWWrapper
+@GLFW
 @Suppress("NOTHING_TO_INLINE")
 inline fun Int.glfwBoolean(): Boolean = when (this) {
 	GLFW_TRUE -> true

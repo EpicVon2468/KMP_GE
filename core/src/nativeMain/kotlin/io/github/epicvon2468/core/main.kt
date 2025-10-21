@@ -2,18 +2,18 @@ package io.github.epicvon2468.core
 
 import glfw.glfwSetErrorCallback
 
-import io.github.epicvon2468.core.interop.GLFWWindowC
-import io.github.epicvon2468.core.interop.glfwInit
-import io.github.epicvon2468.core.interop.glfwTerminate
-import io.github.epicvon2468.core.interop.glfwSwapInterval
-import io.github.epicvon2468.core.interop.glfwCreateWindow
-import io.github.epicvon2468.core.interop.glGetString
-import io.github.epicvon2468.core.interop.glfwMakeContextCurrent
-import io.github.epicvon2468.core.interop.GL_SHADING_LANGUAGE_VERSION
-import io.github.epicvon2468.core.interop.glfwPollEvents
-import io.github.epicvon2468.core.interop.glfwSwapBuffers
-import io.github.epicvon2468.core.interop.glfwWindowShouldClose
-import io.github.epicvon2468.core.interop.glfwDestroyWindow
+import io.github.epicvon2468.core.interop.gl.glGetString
+import io.github.epicvon2468.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
+import io.github.epicvon2468.core.interop.glfw.GLFWWindowC
+import io.github.epicvon2468.core.interop.glfw.glfwInit
+import io.github.epicvon2468.core.interop.glfw.glfwTerminate
+import io.github.epicvon2468.core.interop.glfw.glfwSwapInterval
+import io.github.epicvon2468.core.interop.glfw.glfwCreateWindow
+import io.github.epicvon2468.core.interop.glfw.glfwMakeContextCurrent
+import io.github.epicvon2468.core.interop.glfw.glfwPollEvents
+import io.github.epicvon2468.core.interop.glfw.glfwSwapBuffers
+import io.github.epicvon2468.core.interop.glfw.glfwWindowShouldClose
+import io.github.epicvon2468.core.interop.glfw.glfwDestroyWindow
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer

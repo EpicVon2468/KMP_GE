@@ -1,23 +1,23 @@
-package io.github.epicvon2468.core.interop
+package io.github.epicvon2468.core.interop.glfw
 
 // TODO: https://www.baeldung.com/jni or https://www.lwjgl.org/
 
-@GLFWWrapper
+@GLFW
 actual fun glfwInit(): Boolean = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwTerminate(): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwSwapInterval(interval: Int): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwSetErrorCallback(callback: GLFWErrorFun?): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwMakeContextCurrent(window: GLFWWindow?): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwCreateWindow(
 	width: Int,
 	height: Int,
@@ -26,20 +26,14 @@ actual fun glfwCreateWindow(
 	share: GLFWWindow?
 ): GLFWWindow? = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwDestroyWindow(window: GLFWWindow?): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwPollEvents(): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwSwapBuffers(window: GLFWWindow?): Unit = TODO()
 
-@GLFWWrapper
+@GLFW
 actual fun glfwWindowShouldClose(window: GLFWWindow?): Boolean = TODO()
-
-@GLFWWrapper
-actual val GLFW_TRUE: Int get() = TODO()
-
-@GLFWWrapper
-actual val GLFW_FALSE: Int get() = TODO()
