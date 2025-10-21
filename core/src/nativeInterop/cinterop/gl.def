@@ -1,0 +1,4 @@
+headers = glcorearb.h glext.h gl.h internal/glcore.h
+
+compilerOpts.linux = -I/usr/include/GL -I/usr/include
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -library GL --allow-shlib-undefined

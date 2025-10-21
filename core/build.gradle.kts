@@ -17,6 +17,7 @@ fun configureNativeTargets(it: KotlinNativeTargetWithHostTests) = with(it) {
 	compilations.getByName("main") {
 		cinterops {
 			val glfw by creating
+			val gl by creating
 		}
 	}
 }

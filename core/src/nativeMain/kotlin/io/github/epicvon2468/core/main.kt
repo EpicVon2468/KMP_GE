@@ -1,21 +1,20 @@
 package io.github.epicvon2468.core
 
-import cnames.structs.GLFWwindow
-
 import glfw.GLFW_FALSE
-import glfw.GL_SHADING_LANGUAGE_VERSION
-import glfw.glfwCreateWindow
-import glfw.glfwDestroyWindow
-import glfw.glfwMakeContextCurrent
 import glfw.glfwPollEvents
 import glfw.glfwSetErrorCallback
 import glfw.glfwSwapBuffers
 import glfw.glfwWindowShouldClose
 
+import io.github.epicvon2468.core.interop.GLFWWindowC
 import io.github.epicvon2468.core.interop.glfwInit
 import io.github.epicvon2468.core.interop.glfwTerminate
 import io.github.epicvon2468.core.interop.glfwSwapInterval
+import io.github.epicvon2468.core.interop.glfwCreateWindow
 import io.github.epicvon2468.core.interop.glGetString
+import io.github.epicvon2468.core.interop.glfwMakeContextCurrent
+import io.github.epicvon2468.core.interop.GL_SHADING_LANGUAGE_VERSION
+import io.github.epicvon2468.core.interop.glfwDestroyWindow
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
@@ -41,7 +40,8 @@ fun main() {
 		println("ERROR - GLFW - Code '$error', message: '$description'")
 	})
 
-	val window: CPointer<GLFWwindow>? = glfwCreateWindow(1920, 1080, "KMP_GE", null, null)
+	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
+	val window: GLFWWindowC? = glfwCreateWindow(1920, 1080, "KMP_GE") as GLFWWindowC?
 	window ?: {
 		glfwTerminate()
 		println("ERROR - GLFWwindow failed to create!")
@@ -56,8 +56,8 @@ fun main() {
 
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
-	while (glfwWindowShouldClose(window) == GLFW_FALSE) {
-		glfwSwapBuffers(window)
+	while (glfwWindowShouldClose(window.window) == GLFW_FALSE) {
+		glfwSwapBuffers(window.window)
 		glfwPollEvents()
 	}
 

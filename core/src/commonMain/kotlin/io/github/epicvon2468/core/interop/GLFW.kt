@@ -1,7 +1,7 @@
 package io.github.epicvon2468.core.interop
 
 @DslMarker
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 annotation class GLFWWrapper
 
 /**
@@ -155,3 +155,38 @@ typealias GLFWErrorFun = (error: Int, description: String?) -> Unit
  */
 @GLFWWrapper
 expect fun glfwSetErrorCallback(callback: GLFWErrorFun?)
+
+/**
+ * Opaque window object.
+ *
+ * @see window_object
+ *
+ * @since Added in version 3.0.
+ */
+@GLFWWrapper
+interface GLFWWindow
+
+/**
+ * Opaque monitor object.
+ *
+ * @see monitor_object
+ *
+ * @since Added in version 3.0.
+ */
+@GLFWWrapper
+interface GLFWMonitor
+
+@GLFWWrapper
+expect fun glfwMakeContextCurrent(window: GLFWWindow?)
+
+@GLFWWrapper
+expect fun glfwCreateWindow(
+	width: Int,
+	height: Int,
+	title: String?,
+	monitor: GLFWMonitor? = null,
+	share: GLFWWindow? = null
+): GLFWWindow?
+
+@GLFWWrapper
+expect fun glfwDestroyWindow(window: GLFWWindow?)
