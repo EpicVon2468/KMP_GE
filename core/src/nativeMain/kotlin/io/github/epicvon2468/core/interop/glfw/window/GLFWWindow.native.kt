@@ -3,7 +3,7 @@
 package io.github.epicvon2468.core.interop.glfw.window
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
-import io.github.epicvon2468.core.interop.glfw.Ptr
+import io.github.epicvon2468.core.interop.Ptr
 import io.github.epicvon2468.core.interop.glfw.glfwBoolean
 import io.github.epicvon2468.core.interop.glfw.monitor.monitor
 import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor

@@ -1,4 +1,4 @@
-package io.github.epicvon2468.core.interop.glfw
+package io.github.epicvon2468.core.interop
 
 actual abstract class Ptd
 

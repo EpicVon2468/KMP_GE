@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalForeignApi::class)
-package io.github.epicvon2468.core.interop.glfw
+package io.github.epicvon2468.core.interop
 
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.CPointer
