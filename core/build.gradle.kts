@@ -48,6 +48,8 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
     }
+
+	compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 }
 
 buildkonfig {

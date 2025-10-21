@@ -1,6 +1,7 @@
 package io.github.epicvon2468.core.interop.glfw.window
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
+import io.github.epicvon2468.core.interop.glfw.Ptr
 import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor
 
 /**
@@ -196,7 +197,8 @@ expect fun glfwSetWindowIcon(window: GLFWWindow?, count: Int, images: GLFWImage?
 
 // void glfwGetWindowPos(GLFWWindow *window, int *xPos, int *yPos)
 
-// void glfwSetWindowPos(GLFWWindow *window, int xPos, int yPos)
+@GLFW
+expect fun glfwSetWindowPos(window: GLFWWindow?, xPos: Int, yPos: Int)
 
 // void glfwGetWindowSize(GLFWWindow *window, int *width, int *height)
 
@@ -246,12 +248,61 @@ expect fun glfwFocusWindow(window: GLFWWindow?)
 @GLFW
 expect fun glfwRequestWindowAttention(window: GLFWWindow?)
 
-//
+@GLFW
+expect fun glfwGetWindowMonitor(window: GLFWWindow?): GLFWMonitor?
+
+@GLFW
+expect fun glfwSetWindowMonitor(
+	window: GLFWWindow?,
+	monitor: GLFWMonitor?,
+	xPos: Int,
+	yPos: Int,
+	width: Int,
+	height: Int,
+	refreshRate: Int
+)
+
+@GLFW
+expect fun glfwGetWindowAttrib(window: GLFWWindow?, attrib: Int): Int
+
+@GLFW
+expect fun glfwSetWindowAttrib(window: GLFWWindow?, attrib: Int, value: Int)
+
+@GLFW
+expect fun glfwSetWindowUserPointer(window: GLFWWindow?, pointer: Ptr<*>?)
+
+@GLFW
+expect fun glfwGetWindowUserPointer(window: GLFWWindow?): Ptr<*>?
+
+// GLFWWindowPosFun glfwSetWindowPosCallback(GLFWWindow *window, GLFWWindowPosFun callback)
+
+// GLFWWindowSizeFun glfwSetWindowSizeCallback(GLFWWindow *window, GLFWWindowSizeFun callback)
+
+// GLFWWindowCloseFun glfwSetWindowCloseCallback(GLFWWindow *window, GLFWWindowCloseFun callback)
+
+// GLFWWindowRefreshFun glfwSetWindowRefreshCallback(GLFWWindow *window, GLFWWindowRefreshFun callback)
+
+// GLFWWindowFocusFun glfwSetWindowFocusCallback(GLFWWindow *window, GLFWWindowFocusFun callback)
+
+// GLFWWindowIconifyFun glfwSetWindowIconifyCallback(GLFWWindow *window, GLFWWindowIconifyFun callback)
+
+// GLFWWindowMaximiseFun glfwSetWindowMaximiseCallback(GLFWWindow *window, GLFWWindowMaximiseFun callback)
+
+// GLFWFramebufferSizeFun glfwSetFramebufferSizeCallback(GLFWWindow *window, GLFWFramebufferSizeFun callback)
+
+// GLFWWindowContentScaleFun glfwSetWindowContentScaleCallback(GLFWWindow *window, GLFWWindowContentScaleFun callback)
 
 @GLFW
 expect fun glfwPollEvents()
 
 @GLFW
-expect fun glfwSwapBuffers(window: GLFWWindow?)
+expect fun glfwWaitEvents()
 
-//
+@GLFW
+expect fun glfwWaitEventsTimeout(timeout: Double)
+
+@GLFW
+expect fun glfwPostEmptyEvent()
+
+@GLFW
+expect fun glfwSwapBuffers(window: GLFWWindow?)

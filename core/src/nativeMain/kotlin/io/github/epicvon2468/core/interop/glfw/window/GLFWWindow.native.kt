@@ -3,9 +3,11 @@
 package io.github.epicvon2468.core.interop.glfw.window
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
+import io.github.epicvon2468.core.interop.glfw.Ptr
 import io.github.epicvon2468.core.interop.glfw.glfwBoolean
 import io.github.epicvon2468.core.interop.glfw.monitor.monitor
 import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor
+import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitorC
 
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
@@ -64,6 +66,10 @@ actual inline fun glfwSetWindowIcon(window: GLFWWindow?, count: Int, images: GLF
 	glfw.glfwSetWindowIcon(window.window, count, images.image)
 
 @GLFW
+actual inline fun glfwSetWindowPos(window: GLFWWindow?, xPos: Int, yPos: Int) =
+	glfw.glfwSetWindowPos(window.window, xPos, yPos)
+
+@GLFW
 actual inline fun glfwSetWindowSizeLimits(
 	window: GLFWWindow?,
 	minWidth: Int,
@@ -88,25 +94,55 @@ actual inline fun glfwSetWindowOpacity(window: GLFWWindow?, opacity: Float) =
 	glfw.glfwSetWindowOpacity(window.window, opacity)
 
 @GLFW
-actual fun glfwIconifyWindow(window: GLFWWindow?) = glfw.glfwIconifyWindow(window.window)
+actual inline fun glfwIconifyWindow(window: GLFWWindow?) = glfw.glfwIconifyWindow(window.window)
 
 @GLFW
-actual fun glfwRestoreWindow(window: GLFWWindow?) = glfw.glfwRestoreWindow(window.window)
+actual inline fun glfwRestoreWindow(window: GLFWWindow?) = glfw.glfwRestoreWindow(window.window)
 
 @GLFW
-actual fun glfwMaximiseWindow(window: GLFWWindow?) = glfw.glfwMaximizeWindow(window.window)
+actual inline fun glfwMaximiseWindow(window: GLFWWindow?) = glfw.glfwMaximizeWindow(window.window)
 
 @GLFW
-actual fun glfwShowWindow(window: GLFWWindow?) = glfw.glfwShowWindow(window.window)
+actual inline fun glfwShowWindow(window: GLFWWindow?) = glfw.glfwShowWindow(window.window)
 
 @GLFW
-actual fun glfwHideWindow(window: GLFWWindow?) = glfw.glfwHideWindow(window.window)
+actual inline fun glfwHideWindow(window: GLFWWindow?) = glfw.glfwHideWindow(window.window)
 
 @GLFW
-actual fun glfwFocusWindow(window: GLFWWindow?) = glfw.glfwFocusWindow(window.window)
+actual inline fun glfwFocusWindow(window: GLFWWindow?) = glfw.glfwFocusWindow(window.window)
 
 @GLFW
-actual fun glfwRequestWindowAttention(window: GLFWWindow?) = glfw.glfwRequestWindowAttention(window.window)
+actual inline fun glfwRequestWindowAttention(window: GLFWWindow?) = glfw.glfwRequestWindowAttention(window.window)
+
+@GLFW
+actual inline fun glfwGetWindowMonitor(window: GLFWWindow?): GLFWMonitor? =
+	glfw.glfwGetWindowMonitor(window.window).let(::GLFWMonitorC)
+
+@GLFW
+actual inline fun glfwSetWindowMonitor(
+	window: GLFWWindow?,
+	monitor: GLFWMonitor?,
+	xPos: Int,
+	yPos: Int,
+	width: Int,
+	height: Int,
+	refreshRate: Int
+) = glfw.glfwSetWindowMonitor(window.window, monitor.monitor, xPos, yPos, width, height, refreshRate)
+
+@GLFW
+actual inline fun glfwGetWindowAttrib(window: GLFWWindow?, attrib: Int): Int =
+	glfw.glfwGetWindowAttrib(window.window, attrib)
+
+@GLFW
+actual inline fun glfwSetWindowAttrib(window: GLFWWindow?, attrib: Int, value: Int) =
+	glfw.glfwSetWindowAttrib(window.window, attrib, value)
+
+@GLFW
+actual inline fun glfwSetWindowUserPointer(window: GLFWWindow?, pointer: Ptr<*>?) =
+	glfw.glfwSetWindowUserPointer(window.window, pointer)
+
+@GLFW
+actual inline fun glfwGetWindowUserPointer(window: GLFWWindow?): Ptr<*>? = glfw.glfwGetWindowUserPointer(window.window)
 
 //
 
@@ -114,6 +150,13 @@ actual fun glfwRequestWindowAttention(window: GLFWWindow?) = glfw.glfwRequestWin
 actual inline fun glfwPollEvents() = glfw.glfwPollEvents()
 
 @GLFW
-actual inline fun glfwSwapBuffers(window: GLFWWindow?) = glfw.glfwSwapBuffers(window.window)
+actual inline fun glfwWaitEvents() = glfw.glfwWaitEvents()
 
-//
+@GLFW
+actual inline fun glfwWaitEventsTimeout(timeout: Double) = glfw.glfwWaitEventsTimeout(timeout)
+
+@GLFW
+actual inline fun glfwPostEmptyEvent() = glfw.glfwPostEmptyEvent()
+
+@GLFW
+actual inline fun glfwSwapBuffers(window: GLFWWindow?) = glfw.glfwSwapBuffers(window.window)

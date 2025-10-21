@@ -19,3 +19,7 @@ inline fun Boolean.glfwBoolean(): Int = when (this) {
 	true -> GLFW_TRUE
 	false -> GLFW_FALSE
 }
+
+expect abstract class Ptd
+
+expect class Ptr<T : Ptd>
