@@ -4,6 +4,8 @@ import io.github.epicvon2468.core.interop.glfw.GLFW
 import io.github.epicvon2468.core.interop.Ptr
 import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor
 
+// https://www.glfw.org/docs/3.4/group__window.html
+
 /**
  * Opaque window object.
  *

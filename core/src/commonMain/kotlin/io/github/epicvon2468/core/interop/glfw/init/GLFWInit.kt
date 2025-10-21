@@ -2,6 +2,8 @@ package io.github.epicvon2468.core.interop.glfw.init
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
 
+// https://www.glfw.org/docs/3.4/group__init.html
+
 @GLFW
 expect val GLFW_TRUE: Int
 

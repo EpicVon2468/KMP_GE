@@ -4,6 +4,8 @@ import io.github.epicvon2468.core.interop.glfw.GLFW
 import io.github.epicvon2468.core.interop.glfw.window.GLFWWindow
 import io.github.epicvon2468.core.interop.glfw.window.glfwSwapBuffers
 
+// https://www.glfw.org/docs/3.4/group__context.html
+
 @GLFW
 interface GLFWGLProc
 
