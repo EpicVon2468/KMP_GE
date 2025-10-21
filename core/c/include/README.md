@@ -1,1 +1,1 @@
-Copy of GLFW header files to use for documentation access. These aren't actually the ones used, system installation is taken instead.
+Copy of GLFW & GL header files to use for documentation access. These aren't actually the ones used, system installation is used instead.
