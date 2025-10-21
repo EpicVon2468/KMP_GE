@@ -1,8 +1,8 @@
 package io.github.epicvon2468.core.interop.glfw.context
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
-import io.github.epicvon2468.core.interop.glfw.GLFWWindow
-import io.github.epicvon2468.core.interop.glfw.glfwSwapBuffers
+import io.github.epicvon2468.core.interop.glfw.window.GLFWWindow
+import io.github.epicvon2468.core.interop.glfw.window.glfwSwapBuffers
 
 @GLFW
 interface GLFWGLProc

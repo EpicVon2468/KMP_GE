@@ -3,10 +3,10 @@
 package io.github.epicvon2468.core.interop.glfw.context
 
 import io.github.epicvon2468.core.interop.glfw.GLFW
-import io.github.epicvon2468.core.interop.glfw.GLFWWindow
-import io.github.epicvon2468.core.interop.glfw.GLFWWindowC
+import io.github.epicvon2468.core.interop.glfw.window.GLFWWindow
+import io.github.epicvon2468.core.interop.glfw.window.GLFWWindowC
+import io.github.epicvon2468.core.interop.glfw.window.window
 import io.github.epicvon2468.core.interop.glfw.glfwBoolean
-import io.github.epicvon2468.core.interop.glfw.window
 
 import kotlinx.cinterop.ExperimentalForeignApi
 
