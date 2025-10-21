@@ -8,7 +8,7 @@ import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 
 @GLFWWrapper
-actual inline fun glfwInit(): Boolean = glfw.glfwInit() == glfw.GLFW_TRUE
+actual inline fun glfwInit(): Boolean = glfw.glfwInit().glfwBoolean()
 
 @GLFWWrapper
 actual inline fun glfwTerminate() = glfw.glfwTerminate()
@@ -56,3 +56,19 @@ actual inline fun glfwCreateWindow(
 
 @GLFWWrapper
 actual inline fun glfwDestroyWindow(window: GLFWWindow?) = glfw.glfwDestroyWindow(window.window)
+
+@GLFWWrapper
+actual inline fun glfwPollEvents() = glfw.glfwPollEvents()
+
+@GLFWWrapper
+actual inline fun glfwSwapBuffers(window: GLFWWindow?) = glfw.glfwSwapBuffers(window.window)
+
+@GLFWWrapper
+actual inline fun glfwWindowShouldClose(window: GLFWWindow?): Boolean =
+	glfw.glfwWindowShouldClose(window.window).glfwBoolean()
+
+@GLFWWrapper
+actual inline val GLFW_TRUE: Int get() = glfw.GLFW_TRUE
+
+@GLFWWrapper
+actual inline val GLFW_FALSE: Int get() = glfw.GLFW_FALSE

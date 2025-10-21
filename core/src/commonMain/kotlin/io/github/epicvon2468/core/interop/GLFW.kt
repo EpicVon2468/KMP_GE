@@ -413,3 +413,26 @@ expect fun glfwCreateWindow(
  */
 @GLFWWrapper
 expect fun glfwDestroyWindow(window: GLFWWindow?)
+
+@GLFWWrapper
+expect fun glfwPollEvents()
+
+@GLFWWrapper
+expect fun glfwSwapBuffers(window: GLFWWindow?)
+
+@GLFWWrapper
+expect fun glfwWindowShouldClose(window: GLFWWindow?): Boolean
+
+@GLFWWrapper
+expect val GLFW_TRUE: Int
+
+@GLFWWrapper
+expect val GLFW_FALSE: Int
+
+@GLFWWrapper
+@Suppress("NOTHING_TO_INLINE")
+inline fun Int.glfwBoolean(): Boolean = when (this) {
+	GLFW_TRUE -> true
+	GLFW_FALSE -> false
+	else -> error("Couldn't parse glfw boolean '$this', expected either '${GLFW_TRUE}' (true) or '${GLFW_FALSE}' (false)!")
+}

@@ -1,10 +1,6 @@
 package io.github.epicvon2468.core
 
-import glfw.GLFW_FALSE
-import glfw.glfwPollEvents
 import glfw.glfwSetErrorCallback
-import glfw.glfwSwapBuffers
-import glfw.glfwWindowShouldClose
 
 import io.github.epicvon2468.core.interop.GLFWWindowC
 import io.github.epicvon2468.core.interop.glfwInit
@@ -14,6 +10,9 @@ import io.github.epicvon2468.core.interop.glfwCreateWindow
 import io.github.epicvon2468.core.interop.glGetString
 import io.github.epicvon2468.core.interop.glfwMakeContextCurrent
 import io.github.epicvon2468.core.interop.GL_SHADING_LANGUAGE_VERSION
+import io.github.epicvon2468.core.interop.glfwPollEvents
+import io.github.epicvon2468.core.interop.glfwSwapBuffers
+import io.github.epicvon2468.core.interop.glfwWindowShouldClose
 import io.github.epicvon2468.core.interop.glfwDestroyWindow
 
 import kotlinx.cinterop.ByteVar
@@ -56,8 +55,8 @@ fun main() {
 
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
-	while (glfwWindowShouldClose(window.window) == GLFW_FALSE) {
-		glfwSwapBuffers(window.window)
+	while (!glfwWindowShouldClose(window)) {
+		glfwSwapBuffers(window)
 		glfwPollEvents()
 	}
 

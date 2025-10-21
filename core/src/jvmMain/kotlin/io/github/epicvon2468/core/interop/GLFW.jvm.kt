@@ -28,3 +28,18 @@ actual fun glfwCreateWindow(
 
 @GLFWWrapper
 actual fun glfwDestroyWindow(window: GLFWWindow?): Unit = TODO()
+
+@GLFWWrapper
+actual fun glfwPollEvents(): Unit = TODO()
+
+@GLFWWrapper
+actual fun glfwSwapBuffers(window: GLFWWindow?): Unit = TODO()
+
+@GLFWWrapper
+actual fun glfwWindowShouldClose(window: GLFWWindow?): Boolean = TODO()
+
+@GLFWWrapper
+actual val GLFW_TRUE: Int get() = TODO()
+
+@GLFWWrapper
+actual val GLFW_FALSE: Int get() = TODO()
