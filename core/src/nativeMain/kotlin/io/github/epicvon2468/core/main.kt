@@ -27,6 +27,9 @@ import platform.posix.exit
 
 // Just some tests for GLFW interop.
 // https://www.glfw.org/docs/latest/quick_guide.html
+// https://dri.freedesktop.org/wiki/libGL/
+// https://www.opengl.org/sdk/
+// https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
 	if (!glfwInit()) {
