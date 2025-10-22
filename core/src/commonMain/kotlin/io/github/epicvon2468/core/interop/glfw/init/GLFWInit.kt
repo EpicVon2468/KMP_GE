@@ -14,13 +14,13 @@ expect val GLFW_FALSE: Int
  * This is the function pointer type for error callbacks. An error callback
  * function has the following signature:
  * ```
- * fun callbackName(error: Int, description: String?): Unit
+ * fun callbackName(errorCode: Int, description: String?): Unit
  * ```
  *
  * **Pointer Lifetime:** The error description string is valid until the callback
  * function returns.
  *
- * @param error An error code. Future releases may add more error codes.
+ * @param errorCode An error code. Future releases may add more error codes.
  * @param description A UTF-8 encoded string describing the error.
  *
  * @see error_handling
@@ -29,7 +29,7 @@ expect val GLFW_FALSE: Int
  * @since Added in version 3.0.
  */
 @GLFW
-typealias GLFWErrorFun = (error: Int, description: String?) -> Unit
+typealias GLFWErrorFun = (errorCode: Int, description: String?) -> Unit
 
 /**
  * This function initialises the GLFW library. Before most GLFW functions can

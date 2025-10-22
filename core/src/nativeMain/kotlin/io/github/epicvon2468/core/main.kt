@@ -37,8 +37,8 @@ fun main() {
 	}
 
 	// To test this, window hint GLFW_CONTEXT_VERSION_MAJOR and GLFW_CONTEXT_VERSION_MINOR to something absurd like 99.
-	glfwSetErrorCallback { error: Int, description: String? ->
-		println("ERROR - GLFW - Code '$error', message: '$description'")
+	glfwSetErrorCallback { errorCode: Int, description: String? ->
+		println("ERROR - GLFWErrorFun: (errorCode: '$errorCode', message: '$description')")
 	}
 
 	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
