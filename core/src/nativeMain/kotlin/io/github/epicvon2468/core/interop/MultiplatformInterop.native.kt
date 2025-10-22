@@ -8,3 +8,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 actual typealias Ptd = CPointed
 
 actual typealias Ptr<T> = CPointer<T>
+
+@Suppress("NOTHING_TO_INLINE")
+actual inline fun exitProcess(status: Int): Nothing = kotlin.system.exitProcess(status)
