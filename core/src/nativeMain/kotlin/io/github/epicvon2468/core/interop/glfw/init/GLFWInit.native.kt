@@ -96,7 +96,7 @@ actual inline fun glfwSetErrorCallback(noinline callback: GLFWErrorFun?) {
 }
 
 @GLFW
-actual fun glfwGetPlatform(): Int = glfw.glfwGetPlatform()
+actual inline fun glfwGetPlatform(): Int = glfw.glfwGetPlatform()
 
 @GLFW
-actual fun glfwPlatformSupported(platform: Int): Boolean = glfw.glfwPlatformSupported(platform).glfwBoolean()
+actual inline fun glfwPlatformSupported(platform: Int): Boolean = glfw.glfwPlatformSupported(platform).glfwBoolean()
