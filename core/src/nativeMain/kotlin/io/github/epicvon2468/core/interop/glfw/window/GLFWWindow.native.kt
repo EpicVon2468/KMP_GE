@@ -217,6 +217,10 @@ actual inline fun glfwWindowShouldClose(window: GLFWWindow?): Boolean =
 	glfw.glfwWindowShouldClose(window.window).glfwBoolean()
 
 @GLFW
+actual inline fun glfwSetWindowShouldClose(window: GLFWWindow?, value: Boolean) =
+	glfw.glfwSetWindowShouldClose(window.window, value.glfwBoolean())
+
+@GLFW
 actual inline fun glfwGetWindowTitle(window: GLFWWindow?): String? = glfw.glfwGetWindowTitle(window.window)?.toKString()
 
 @GLFW

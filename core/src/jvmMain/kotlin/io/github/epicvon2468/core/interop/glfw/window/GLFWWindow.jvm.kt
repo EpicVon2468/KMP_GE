@@ -188,6 +188,9 @@ actual fun glfwDestroyWindow(window: GLFWWindow?): Unit = TODO()
 actual fun glfwWindowShouldClose(window: GLFWWindow?): Boolean = TODO()
 
 @GLFW
+actual fun glfwSetWindowShouldClose(window: GLFWWindow?, value: Boolean): Unit = TODO()
+
+@GLFW
 actual fun glfwGetWindowTitle(window: GLFWWindow?): String? = TODO()
 
 @GLFW

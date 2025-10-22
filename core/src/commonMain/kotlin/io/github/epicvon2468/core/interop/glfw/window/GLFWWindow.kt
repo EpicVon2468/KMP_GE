@@ -348,6 +348,9 @@ expect fun glfwDestroyWindow(window: GLFWWindow?)
 expect fun glfwWindowShouldClose(window: GLFWWindow?): Boolean
 
 @GLFW
+expect fun glfwSetWindowShouldClose(window: GLFWWindow?, value: Boolean)
+
+@GLFW
 expect fun glfwGetWindowTitle(window: GLFWWindow?): String?
 
 @GLFW
