@@ -12,10 +12,55 @@ import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 
 @GLFW
+actual const val GLFW_VERSION_MAJOR: Int = glfw.GLFW_VERSION_MAJOR
+
+@GLFW
+actual const val GLFW_VERSION_MINOR: Int = glfw.GLFW_VERSION_MINOR
+
+@GLFW
 actual const val GLFW_TRUE: Int = glfw.GLFW_TRUE
 
 @GLFW
 actual const val GLFW_FALSE: Int = glfw.GLFW_FALSE
+
+@GLFW
+actual const val GLFW_JOYSTICK_HAT_BUTTONS: Int = glfw.GLFW_JOYSTICK_HAT_BUTTONS
+
+@GLFW
+actual const val GLFW_ANGLE_PLATFORM_TYPE: Int = glfw.GLFW_ANGLE_PLATFORM_TYPE
+
+@GLFW
+actual const val GLFW_PLATFORM: Int = glfw.GLFW_PLATFORM
+
+@GLFW
+actual const val GLFW_COCOA_CHDIR_RESOURCE: Int = glfw.GLFW_COCOA_CHDIR_RESOURCES
+
+@GLFW
+actual const val GLFW_COCOA_MENUBAR: Int = glfw.GLFW_COCOA_MENUBAR
+
+@GLFW
+actual const val GLFW_X11_XCB_VULKAN_SURFACE: Int = glfw.GLFW_X11_XCB_VULKAN_SURFACE
+
+@GLFW
+actual const val GLFW_WAYLAND_LIBDECOR: Int = glfw.GLFW_WAYLAND_LIBDECOR
+
+@GLFW
+actual const val GLFW_ANY_PLATFORM: Int = glfw.GLFW_ANY_PLATFORM
+
+@GLFW
+actual const val GLFW_PLATFORM_WIN32: Int = glfw.GLFW_PLATFORM_WIN32
+
+@GLFW
+actual const val GLFW_PLATFORM_COCOA: Int = glfw.GLFW_PLATFORM_COCOA
+
+@GLFW
+actual const val GLFW_PLATFORM_WAYLAND: Int = glfw.GLFW_PLATFORM_WAYLAND
+
+@GLFW
+actual const val GLFW_PLATFORM_X11: Int = glfw.GLFW_PLATFORM_X11
+
+@GLFW
+actual const val GLFW_PLATFORM_NULL: Int = glfw.GLFW_PLATFORM_NULL
 
 @GLFW
 actual inline fun glfwInit(): Boolean = glfw.glfwInit().glfwBoolean()

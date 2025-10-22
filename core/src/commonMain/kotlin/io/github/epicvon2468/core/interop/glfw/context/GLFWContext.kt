@@ -99,4 +99,5 @@ expect fun glfwSwapInterval(interval: Int)
 @GLFW
 expect fun glfwExtensionSupported(extension: String?): Boolean
 
-// GLFWGLProc glfwGetProcAddress(const char *procname)
+@GLFW
+expect fun glfwGetProcAddress(name: String?): GLFWGLProc?

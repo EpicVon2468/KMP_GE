@@ -11,6 +11,12 @@ import io.github.epicvon2468.core.interop.glfw.glfwBoolean
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @GLFW
+data class GLFWGLProcC(val proc: glfw.GLFWglproc) : GLFWGLProc
+
+@GLFW
+inline val GLFWGLProc?.proc: glfw.GLFWglproc? get() = (this as? GLFWGLProcC)?.proc
+
+@GLFW
 actual inline fun glfwMakeContextCurrent(window: GLFWWindow?) = glfw.glfwMakeContextCurrent(window.window)
 
 @GLFW
@@ -22,3 +28,6 @@ actual inline fun glfwSwapInterval(interval: Int) = glfw.glfwSwapInterval(interv
 @GLFW
 actual inline fun glfwExtensionSupported(extension: String?): Boolean =
 	glfw.glfwExtensionSupported(extension).glfwBoolean()
+
+@GLFW
+actual inline fun glfwGetProcAddress(name: String?): GLFWGLProc? = glfw.glfwGetProcAddress(name)?.let(::GLFWGLProcC)

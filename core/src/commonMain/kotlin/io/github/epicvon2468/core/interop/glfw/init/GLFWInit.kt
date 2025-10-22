@@ -5,10 +5,55 @@ import io.github.epicvon2468.core.interop.glfw.GLFW
 // https://www.glfw.org/docs/3.4/group__init.html
 
 @GLFW
+expect val GLFW_VERSION_MAJOR: Int
+
+@GLFW
+expect val GLFW_VERSION_MINOR: Int
+
+@GLFW
 expect val GLFW_TRUE: Int
 
 @GLFW
 expect val GLFW_FALSE: Int
+
+@GLFW
+expect val GLFW_JOYSTICK_HAT_BUTTONS: Int
+
+@GLFW
+expect val GLFW_ANGLE_PLATFORM_TYPE: Int
+
+@GLFW
+expect val GLFW_PLATFORM: Int
+
+@GLFW
+expect val GLFW_COCOA_CHDIR_RESOURCE: Int
+
+@GLFW
+expect val GLFW_COCOA_MENUBAR: Int
+
+@GLFW
+expect val GLFW_X11_XCB_VULKAN_SURFACE: Int
+
+@GLFW
+expect val GLFW_WAYLAND_LIBDECOR: Int
+
+@GLFW
+expect val GLFW_ANY_PLATFORM: Int
+
+@GLFW
+expect val GLFW_PLATFORM_WIN32: Int
+
+@GLFW
+expect val GLFW_PLATFORM_COCOA: Int
+
+@GLFW
+expect val GLFW_PLATFORM_WAYLAND: Int
+
+@GLFW
+expect val GLFW_PLATFORM_X11: Int
+
+@GLFW
+expect val GLFW_PLATFORM_NULL: Int
 
 /**
  * This is the function pointer type for error callbacks. An error callback
@@ -120,6 +165,9 @@ expect fun glfwTerminate()
 expect fun glfwInitHint(hint: Int, value: Int)
 
 // fun glfwInitAllocator(allocator: GLFWAllocator)
+
+// Vulkan support is still in question.
+// void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader)
 
 // void glfwGetVersion(int *major, int *minor, int *rev)
 

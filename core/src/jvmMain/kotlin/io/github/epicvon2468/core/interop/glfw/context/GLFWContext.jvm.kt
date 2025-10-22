@@ -14,3 +14,6 @@ actual fun glfwSwapInterval(interval: Int): Unit = TODO()
 
 @GLFW
 actual fun glfwExtensionSupported(extension: String?): Boolean = TODO()
+
+@GLFW
+actual fun glfwGetProcAddress(name: String?): GLFWGLProc? = TODO()
