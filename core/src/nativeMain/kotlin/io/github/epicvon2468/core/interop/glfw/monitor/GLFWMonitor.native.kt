@@ -13,13 +13,13 @@ import kotlinx.cinterop.toKString
  * Cinterop implementation of the [GLFWMonitor] interface.
  */
 @GLFW
-data class GLFWMonitorC(val monitor: CPointer<cnames.structs.GLFWmonitor>?) : GLFWMonitor
+data class GLFWMonitorC(val monitor: CPointer<cnames.structs.GLFWmonitor>) : GLFWMonitor
 
 @GLFW
 inline val GLFWMonitor?.monitor: CPointer<cnames.structs.GLFWmonitor>? get() = (this as? GLFWMonitorC)?.monitor
 
 @GLFW
-data class GLFWVidModeC(val vidMode: CPointer<glfw.GLFWvidmode>?) : GLFWVidMode
+data class GLFWVidModeC(val vidMode: CPointer<glfw.GLFWvidmode>) : GLFWVidMode
 
 @GLFW
 inline val GLFWVidMode?.vidMode: CPointer<glfw.GLFWvidmode>? get() = (this as? GLFWVidModeC)?.vidMode
@@ -41,7 +41,7 @@ actual inline fun glfwGetMonitorUserPointer(monitor: GLFWMonitor?): Ptr<*>? =
 
 @GLFW
 actual inline fun glfwGetVideoMode(monitor: GLFWMonitor?): GLFWVidMode? =
-	glfw.glfwGetVideoMode(monitor.monitor).let(::GLFWVidModeC)
+	glfw.glfwGetVideoMode(monitor.monitor)?.let(::GLFWVidModeC)
 
 @GLFW
 actual inline fun glfwSetGamma(monitor: GLFWMonitor?, gamma: Float) = glfw.glfwSetGamma(monitor.monitor, gamma)

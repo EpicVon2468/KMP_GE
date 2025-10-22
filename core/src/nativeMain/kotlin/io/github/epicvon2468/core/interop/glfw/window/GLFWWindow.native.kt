@@ -15,16 +15,19 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 
 /**
- * CInterop implementation of the [io.github.epicvon2468.core.interop.glfw.window.GLFWWindow] interface.
+ * CInterop implementation of the [GLFWWindow] interface.
  */
 @GLFW
-data class GLFWWindowC(val window: CPointer<cnames.structs.GLFWwindow>?) : GLFWWindow
+data class GLFWWindowC(val window: CPointer<cnames.structs.GLFWwindow>) : GLFWWindow
 
 @GLFW
 inline val GLFWWindow?.window: CPointer<cnames.structs.GLFWwindow>? get() = (this as? GLFWWindowC)?.window
 
+/**
+ * CInterop implementation of the [GLFWImage] interface.
+ */
 @GLFW
-data class GLFWImageC(val image: CValuesRef<glfw.GLFWimage>?) : GLFWImage
+data class GLFWImageC(val image: CValuesRef<glfw.GLFWimage>) : GLFWImage
 
 @GLFW
 inline val GLFWImage?.image: CValuesRef<glfw.GLFWimage>? get() = (this as? GLFWImageC)?.image
@@ -45,7 +48,7 @@ actual inline fun glfwCreateWindow(
 	title: String?,
 	monitor: GLFWMonitor?/* = null*/,
 	share: GLFWWindow?/* = null*/
-): GLFWWindow? = glfw.glfwCreateWindow(width, height, title, monitor.monitor, share.window).let(::GLFWWindowC)
+): GLFWWindow? = glfw.glfwCreateWindow(width, height, title, monitor.monitor, share.window)?.let(::GLFWWindowC)
 
 @GLFW
 actual inline fun glfwDestroyWindow(window: GLFWWindow?) = glfw.glfwDestroyWindow(window.window)
@@ -116,7 +119,7 @@ actual inline fun glfwRequestWindowAttention(window: GLFWWindow?) = glfw.glfwReq
 
 @GLFW
 actual inline fun glfwGetWindowMonitor(window: GLFWWindow?): GLFWMonitor? =
-	glfw.glfwGetWindowMonitor(window.window).let(::GLFWMonitorC)
+	glfw.glfwGetWindowMonitor(window.window)?.let(::GLFWMonitorC)
 
 @GLFW
 actual inline fun glfwSetWindowMonitor(
