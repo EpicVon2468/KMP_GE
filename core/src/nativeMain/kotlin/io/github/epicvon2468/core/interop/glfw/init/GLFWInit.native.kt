@@ -86,8 +86,13 @@ actual inline fun glfwSetErrorCallback(noinline callback: GLFWErrorFun?) {
 	// FIXME: Can't return the old callback because `String.cstr` is `CValues<ByteVar>` and not `CPointer<ByteVar>`
 	// Annoyingly, staticCFunction doesn't let you reference variables, but it allows this... and it works.
 	// If there's a more efficient or better way to do this in future, I'll change to use that instead.
+	if (callback == null) {
+		glfw.glfwSetErrorCallback(null)
+		_callback = null
+		return
+	}
 	_callback = callback
-	glfw.glfwSetErrorCallback(callback?.let { staticCFunction(::__callback) })
+	glfw.glfwSetErrorCallback(staticCFunction(::__callback))
 }
 
 @GLFW
