@@ -6,6 +6,165 @@ import io.github.epicvon2468.core.interop.glfw.monitor.GLFWMonitor
 
 // https://www.glfw.org/docs/3.4/group__window.html
 
+@GLFW
+expect val GLFW_FOCUSED: Int
+
+@GLFW
+expect val GLFW_ICONIFIED: Int
+
+@GLFW
+expect val GLFW_RESIZABLE: Int
+
+@GLFW
+expect val GLFW_VISIBLE: Int
+
+@GLFW
+expect val GLFW_DECORATED: Int
+
+@GLFW
+expect val GLFW_AUTO_ICONIFY: Int
+
+@GLFW
+expect val GLFW_FLOATING: Int
+
+@GLFW
+expect val GLFW_MAXIMISED: Int
+
+@GLFW
+expect val GLFW_CENTRE_CURSOR: Int
+
+@GLFW
+expect val GLFW_TRANSPARENT_FRAMEBUFFER: Int
+
+@GLFW
+expect val GLFW_HOVERED: Int
+
+@GLFW
+expect val GLFW_FOCUS_ON_SHOW: Int
+
+@GLFW
+expect val GLFW_MOUSE_PASSTHROUGH: Int
+
+@GLFW
+expect val GLFW_POSITION_X: Int
+
+@GLFW
+expect val GLFW_POSITION_Y: Int
+
+@GLFW
+expect val GLFW_RED_BITS: Int
+
+@GLFW
+expect val GLFW_GREEN_BITS: Int
+
+@GLFW
+expect val GLFW_BLUE_BITS: Int
+
+@GLFW
+expect val GLFW_ALPHA_BITS: Int
+
+@GLFW
+expect val GLFW_DEPTH_BITS: Int
+
+@GLFW
+expect val GLFW_STENCIL_BITS: Int
+
+@GLFW
+expect val GLFW_ACCUM_RED_BITS: Int
+
+@GLFW
+expect val GLFW_ACCUM_GREEN_BITS: Int
+
+@GLFW
+expect val GLFW_ACCUM_BLUE_BITS: Int
+
+@GLFW
+expect val GLFW_ACCUM_ALPHA_BITS: Int
+
+@GLFW
+expect val GLFW_AUX_BUFFERS: Int
+
+@GLFW
+expect val GLFW_STEREO: Int
+
+@GLFW
+expect val GLFW_SAMPLES: Int
+
+@GLFW
+expect val GLFW_SRGB_CAPABLE: Int
+
+@GLFW
+expect val GLFW_REFRESH_RATE: Int
+
+@GLFW
+expect val GLFW_DOUBLEBUFFER: Int
+
+@GLFW
+expect val GLFW_CLIENT_API: Int
+
+@GLFW
+expect val GLFW_CONTEXT_VERSION_MAJOR: Int
+
+@GLFW
+expect val GLFW_CONTEXT_VERSION_MINOR: Int
+
+@GLFW
+expect val GLFW_CONTEXT_REVISION: Int
+
+@GLFW
+expect val GLFW_CONTEXT_ROBUSTNESS: Int
+
+@GLFW
+expect val GLFW_OPENGL_FORWARD_COMPAT: Int
+
+@GLFW
+expect val GLFW_CONTEXT_DEBUG: Int
+
+@GLFW
+expect val GLFW_OPENGL_DEBUG_CONTEXT: Int
+
+@GLFW
+expect val GLFW_OPENGL_PROFILE: Int
+
+@GLFW
+expect val GLFW_CONTEXT_RELEASE_BEHAVIOUR: Int
+
+@GLFW
+expect val GLFW_CONTEXT_NO_ERROR: Int
+
+@GLFW
+expect val GLFW_CONTEXT_CREATION_API: Int
+
+@GLFW
+expect val GLFW_SCALE_TO_MONITOR: Int
+
+@GLFW
+expect val GLFW_SCALE_FRAMEBUFFER: Int
+
+@GLFW
+expect val GLFW_COCOA_RETINA_FRAMEBUFFER: Int
+
+@GLFW
+expect val GLFW_COCOA_FRAME_NAME: Int
+
+@GLFW
+expect val GLFW_COCOA_GRAPHICS_SWITCHING: Int
+
+@GLFW
+expect val GLFW_X11_CLASS_NAME: Int
+
+@GLFW
+expect val GLFW_X11_INSTANCE_NAME: Int
+
+@GLFW
+expect val GLFW_WIN32_KEYBOARD_MENU: Int
+
+@GLFW
+expect val GLFW_WIN32_SHOWDEFAULT: Int
+
+@GLFW
+expect val GLFW_WAYLAND_APP_ID: Int
+
 /**
  * Opaque window object.
  *

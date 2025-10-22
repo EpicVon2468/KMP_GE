@@ -14,6 +14,165 @@ import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 
+@GLFW
+actual const val GLFW_FOCUSED: Int = glfw.GLFW_FOCUSED
+
+@GLFW
+actual const val GLFW_ICONIFIED: Int = glfw.GLFW_ICONIFIED
+
+@GLFW
+actual const val GLFW_RESIZABLE: Int = glfw.GLFW_RESIZABLE
+
+@GLFW
+actual const val GLFW_VISIBLE: Int = glfw.GLFW_VISIBLE
+
+@GLFW
+actual const val GLFW_DECORATED: Int = glfw.GLFW_DECORATED
+
+@GLFW
+actual const val GLFW_AUTO_ICONIFY: Int = glfw.GLFW_AUTO_ICONIFY
+
+@GLFW
+actual const val GLFW_FLOATING: Int = glfw.GLFW_FLOATING
+
+@GLFW
+actual const val GLFW_MAXIMISED: Int = glfw.GLFW_MAXIMIZED
+
+@GLFW
+actual const val GLFW_CENTRE_CURSOR: Int = glfw.GLFW_CENTER_CURSOR
+
+@GLFW
+actual const val GLFW_TRANSPARENT_FRAMEBUFFER: Int = glfw.GLFW_TRANSPARENT_FRAMEBUFFER
+
+@GLFW
+actual const val GLFW_HOVERED: Int = glfw.GLFW_HOVERED
+
+@GLFW
+actual const val GLFW_FOCUS_ON_SHOW: Int = glfw.GLFW_FOCUS_ON_SHOW
+
+@GLFW
+actual const val GLFW_MOUSE_PASSTHROUGH: Int = glfw.GLFW_MOUSE_PASSTHROUGH
+
+@GLFW
+actual const val GLFW_POSITION_X: Int = glfw.GLFW_POSITION_X
+
+@GLFW
+actual const val GLFW_POSITION_Y: Int = glfw.GLFW_POSITION_Y
+
+@GLFW
+actual const val GLFW_RED_BITS: Int = glfw.GLFW_RED_BITS
+
+@GLFW
+actual const val GLFW_GREEN_BITS: Int = glfw.GLFW_GREEN_BITS
+
+@GLFW
+actual const val GLFW_BLUE_BITS: Int = glfw.GLFW_BLUE_BITS
+
+@GLFW
+actual const val GLFW_ALPHA_BITS: Int = glfw.GLFW_ALPHA_BITS
+
+@GLFW
+actual const val GLFW_DEPTH_BITS: Int = glfw.GLFW_DEPTH_BITS
+
+@GLFW
+actual const val GLFW_STENCIL_BITS: Int = glfw.GLFW_STENCIL_BITS
+
+@GLFW
+actual const val GLFW_ACCUM_RED_BITS: Int = glfw.GLFW_ACCUM_RED_BITS
+
+@GLFW
+actual const val GLFW_ACCUM_GREEN_BITS: Int = glfw.GLFW_ACCUM_GREEN_BITS
+
+@GLFW
+actual const val GLFW_ACCUM_BLUE_BITS: Int = glfw.GLFW_ACCUM_BLUE_BITS
+
+@GLFW
+actual const val GLFW_ACCUM_ALPHA_BITS: Int = glfw.GLFW_ACCUM_ALPHA_BITS
+
+@GLFW
+actual const val GLFW_AUX_BUFFERS: Int = glfw.GLFW_AUX_BUFFERS
+
+@GLFW
+actual const val GLFW_STEREO: Int = glfw.GLFW_STEREO
+
+@GLFW
+actual const val GLFW_SAMPLES: Int = glfw.GLFW_SAMPLES
+
+@GLFW
+actual const val GLFW_SRGB_CAPABLE: Int = glfw.GLFW_SRGB_CAPABLE
+
+@GLFW
+actual const val GLFW_REFRESH_RATE: Int = glfw.GLFW_REFRESH_RATE
+
+@GLFW
+actual const val GLFW_DOUBLEBUFFER: Int = glfw.GLFW_DOUBLEBUFFER
+
+@GLFW
+actual const val GLFW_CLIENT_API: Int = glfw.GLFW_CLIENT_API
+
+@GLFW
+actual const val GLFW_CONTEXT_VERSION_MAJOR: Int = glfw.GLFW_CONTEXT_VERSION_MAJOR
+
+@GLFW
+actual const val GLFW_CONTEXT_VERSION_MINOR: Int = glfw.GLFW_CONTEXT_VERSION_MINOR
+
+@GLFW
+actual const val GLFW_CONTEXT_REVISION: Int = glfw.GLFW_CONTEXT_REVISION
+
+@GLFW
+actual const val GLFW_CONTEXT_ROBUSTNESS: Int = glfw.GLFW_CONTEXT_ROBUSTNESS
+
+@GLFW
+actual const val GLFW_OPENGL_FORWARD_COMPAT: Int = glfw.GLFW_OPENGL_FORWARD_COMPAT
+
+@GLFW
+actual const val GLFW_CONTEXT_DEBUG: Int = glfw.GLFW_CONTEXT_DEBUG
+
+@GLFW
+actual const val GLFW_OPENGL_DEBUG_CONTEXT: Int = GLFW_CONTEXT_DEBUG
+
+@GLFW
+actual const val GLFW_OPENGL_PROFILE: Int = glfw.GLFW_OPENGL_PROFILE
+
+@GLFW
+actual const val GLFW_CONTEXT_RELEASE_BEHAVIOUR: Int = glfw.GLFW_CONTEXT_RELEASE_BEHAVIOR
+
+@GLFW
+actual const val GLFW_CONTEXT_NO_ERROR: Int = glfw.GLFW_CONTEXT_NO_ERROR
+
+@GLFW
+actual const val GLFW_CONTEXT_CREATION_API: Int = glfw.GLFW_CONTEXT_CREATION_API
+
+@GLFW
+actual const val GLFW_SCALE_TO_MONITOR: Int = glfw.GLFW_SCALE_TO_MONITOR
+
+@GLFW
+actual const val GLFW_SCALE_FRAMEBUFFER: Int = glfw.GLFW_SCALE_FRAMEBUFFER
+
+@GLFW
+actual const val GLFW_COCOA_RETINA_FRAMEBUFFER: Int = glfw.GLFW_COCOA_RETINA_FRAMEBUFFER
+
+@GLFW
+actual const val GLFW_COCOA_FRAME_NAME: Int = glfw.GLFW_COCOA_FRAME_NAME
+
+@GLFW
+actual const val GLFW_COCOA_GRAPHICS_SWITCHING: Int = glfw.GLFW_COCOA_GRAPHICS_SWITCHING
+
+@GLFW
+actual const val GLFW_X11_CLASS_NAME: Int = glfw.GLFW_X11_CLASS_NAME
+
+@GLFW
+actual const val GLFW_X11_INSTANCE_NAME: Int = glfw.GLFW_X11_INSTANCE_NAME
+
+@GLFW
+actual const val GLFW_WIN32_KEYBOARD_MENU: Int = glfw.GLFW_WIN32_KEYBOARD_MENU
+
+@GLFW
+actual const val GLFW_WIN32_SHOWDEFAULT: Int = glfw.GLFW_WIN32_SHOWDEFAULT
+
+@GLFW
+actual const val GLFW_WAYLAND_APP_ID: Int = glfw.GLFW_WAYLAND_APP_ID
+
 /**
  * CInterop implementation of the [GLFWWindow] interface.
  */
