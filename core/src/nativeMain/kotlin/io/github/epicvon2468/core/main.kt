@@ -1,4 +1,9 @@
+@file:OptIn(ExperimentalForeignApi::class)
 package io.github.epicvon2468.core
+
+import gl.GLADapiproc
+import gl.gladLoadGL
+import glfw.glfwGetProcAddress
 
 import io.github.epicvon2468.core.interop.gl.glGetString
 import io.github.epicvon2468.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
@@ -15,12 +20,22 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwInit
 import io.github.epicvon2468.core.interop.glfw.init.glfwSetErrorCallback
 import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 
+import kotlinx.cinterop.ByteVar
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.staticCFunction
+import kotlinx.cinterop.toKString
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
 
 import kotlin.system.exitProcess
+
+const val VERTEX_SHADER: String = "#version 330\nuniform mat4 MVP;\nin vec3 vCol;\nin vec2 vPos;\nout vec3 color;\nvoid main() {\ngl_Position = MVP * vec4(vPos, 0.0, 1.0);\ncolor = vCol;\n}"
+
+const val FRAGMENT_SHADER: String = "#version 330\nin vec3 color;\nout vec4 fragment;\nvoid main() {\nfragment = vec4(color, 1.0);\n}"
+
+fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
 // Just some tests for GLFW interop.
 // https://www.glfw.org/docs/latest/quick_guide.html
@@ -50,6 +65,7 @@ fun main() {
 	}
 
 	glfwMakeContextCurrent(window)
+	gladLoadGL(staticCFunction(::ktGlfwGetProcAddress))
 	// V-Sync.
 	glfwSwapInterval(1)
 

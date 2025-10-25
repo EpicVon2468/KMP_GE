@@ -1,4 +1,5 @@
-headers = glcorearb.h glext.h gl.h internal/glcore.h
+headers = glad/gl.h
+staticLibraries = libglad.a
+libraryPaths = /home/mavity/IdeaProjects/KMP_GE/core/c/include/glad
 
-compilerOpts.linux = -I/usr/include/GL -I/usr/include
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -library GL --allow-shlib-undefined
+compilerOpts.linux = -I/home/mavity/IdeaProjects/KMP_GE/core/c/include/glad
