@@ -3,9 +3,11 @@ package io.github.epicvon2468.core
 
 import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
+import gl.GL_COLOR_BUFFER_BIT
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_STATIC_DRAW
+import gl.GL_TRIANGLES
 import gl.GL_VERTEX_SHADER
 import gl.GLint
 import gl.GLuint
@@ -14,9 +16,11 @@ import gl.glAttachShader
 import gl.glBindBuffer
 import gl.glBindVertexArray
 import gl.glBufferData
+import gl.glClear
 import gl.glCompileShader
 import gl.glCreateProgram
 import gl.glCreateShader
+import gl.glDrawArrays
 import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
@@ -24,9 +28,14 @@ import gl.glGetAttribLocation
 import gl.glGetUniformLocation
 import gl.glLinkProgram
 import gl.glShaderSourceK
+import gl.glUniformMatrix4fv
+import gl.glUseProgram
 import gl.glVertexAttribPointer
+import gl.glViewport
 import gl.gladLoadGL
+import glfw.glfwGetFramebufferSize
 import glfw.glfwGetProcAddress
+import glfw.glfwGetTime
 import glfw.glfwGetVersion
 
 import io.github.epicvon2468.core.interop.exitProcess
@@ -50,7 +59,9 @@ import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointerVarOf
+import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
@@ -71,6 +82,11 @@ import kotlinx.cinterop.value
 
 import linearmaths.Vertex
 import linearmaths.cSizeOf
+import linearmaths.mat4x4
+import linearmaths.mat4x4_identity
+import linearmaths.mat4x4_mul
+import linearmaths.mat4x4_ortho
+import linearmaths.mat4x4_rotate_Z
 import linearmaths.vec2
 import linearmaths.vec3
 import linearmaths.vertexColOffset
@@ -207,6 +223,32 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
 
 	while (!glfwWindowShouldClose(window)) {
+		val ratio: Float = memScoped {
+			val width: IntVar = alloc()
+			val height: IntVar = alloc()
+			glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+
+			glViewport!!.invoke(0, 0, width.value, height.value)
+
+			width.value / height.value
+		}.toFloat()
+		glClear!!.invoke(GL_COLOR_BUFFER_BIT.toUInt())
+
+		memScoped {
+			val m: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			val p: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			val mvp: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			mat4x4_identity(m)
+			mat4x4_rotate_Z(m, m, glfwGetTime().toFloat())
+			mat4x4_ortho(p, -ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f)
+			mat4x4_mul(mvp, p, m)
+
+			glUseProgram!!.invoke(program)
+			glUniformMatrix4fv!!.invoke(mvpLocation, 1, GL_FALSE.toUByte(), mvp)
+		}
+		glBindVertexArray!!.invoke(vertexArray.value)
+		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
+
 		glfwSwapBuffers(window)
 		glfwPollEvents()
 	}
