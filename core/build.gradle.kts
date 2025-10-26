@@ -55,6 +55,14 @@ tasks.register("generateCInteropDefs") {
 					size_t cSizeOf(Vertex vertices[3]) {
 						return sizeof(vertices);
 					}
+
+					void* vertexPosOffset() {
+						return (void*) offsetof(Vertex, pos);
+					}
+
+					void* vertexColOffset() {
+						return (void*) offsetof(Vertex, col);
+					}
 				""".trimIndent()
 			)
 			println("Generated linearmaths.def")

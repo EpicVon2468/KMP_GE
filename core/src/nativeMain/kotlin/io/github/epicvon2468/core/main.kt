@@ -3,6 +3,8 @@ package io.github.epicvon2468.core
 
 import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
+import gl.GL_FALSE
+import gl.GL_FLOAT
 import gl.GL_STATIC_DRAW
 import gl.GL_VERTEX_SHADER
 import gl.GLint
@@ -10,17 +12,19 @@ import gl.GLuint
 import gl.GLuintVar
 import gl.glAttachShader
 import gl.glBindBuffer
+import gl.glBindVertexArray
 import gl.glBufferData
 import gl.glCompileShader
 import gl.glCreateProgram
 import gl.glCreateShader
+import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
 import gl.glGetAttribLocation
 import gl.glGetUniformLocation
 import gl.glLinkProgram
-import gl.glShaderSource
 import gl.glShaderSourceK
+import gl.glVertexAttribPointer
 import gl.gladLoadGL
 import glfw.glfwGetProcAddress
 import glfw.glfwGetVersion
@@ -43,6 +47,7 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
+import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -59,6 +64,7 @@ import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.set
+import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
@@ -67,6 +73,8 @@ import linearmaths.Vertex
 import linearmaths.cSizeOf
 import linearmaths.vec2
 import linearmaths.vec3
+import linearmaths.vertexColOffset
+import linearmaths.vertexPosOffset
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
@@ -167,7 +175,7 @@ fun glfwMain(): Nothing {
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
 	memScoped {
-		val vertexBuffer: GLuintVar = alloc<GLuintVar>()
+		val vertexBuffer: GLuintVar = alloc()
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
@@ -190,13 +198,25 @@ fun glfwMain(): Nothing {
 	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vPos".cstr.ptr) }
 	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr) }
 
+	val vertexArray: GLuintVar = nativeHeap.alloc()
+	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
+	glBindVertexArray!!.invoke(vertexArray.value)
+	glEnableVertexAttribArray!!.invoke(vPosLocation.toUInt())
+	glVertexAttribPointer!!.invoke(vPosLocation.toUInt(), 2, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexPosOffset())
+	glEnableVertexAttribArray!!.invoke(vColLocation.toUInt())
+	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
 		glfwPollEvents()
 	}
 
+	nativeHeap.free(vertexArray)
+
 	glfwDestroyWindow(window)
 	glfwTerminate()
+
+	nativeHeap.free(vertices)
 
 	exitProcess(EXIT_SUCCESS)
 }
