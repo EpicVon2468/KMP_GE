@@ -166,11 +166,9 @@ fun glfwMain(): Nothing {
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
 	}
 
-	memScoped {
-		val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
-		glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
-		glCompileShader!!.invoke(vertexShader)
-	}
+	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
+	glCompileShader!!.invoke(vertexShader)
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
