@@ -4,6 +4,7 @@ package io.github.epicvon2468.core
 import gl.GLADapiproc
 import gl.gladLoadGL
 import glfw.glfwGetProcAddress
+import glfw.glfwGetVersion
 
 import io.github.epicvon2468.core.interop.exitProcess
 import io.github.epicvon2468.core.interop.gl.glGetString
@@ -24,11 +25,17 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.allocArrayOf
+import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.refTo
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 
+import linearmaths.vec2
+
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
+import platform.posix.free
 
 const val VERTEX_SHADER: String = "#version 330\nuniform mat4 MVP;\nin vec3 vCol;\nin vec2 vPos;\nout vec3 color;\nvoid main() {\ngl_Position = MVP * vec4(vPos, 0.0, 1.0);\ncolor = vCol;\n}"
 
@@ -43,7 +50,14 @@ fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAdd
 // https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
-	println("GLFW version: ${glfwGetVersionString()}")
+	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
+	free(vec2)
+
+	println("GLFW version string: ${glfwGetVersionString()}")
+
+	val version = IntArray(3)
+	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
+	println("Version: ${version.contentToString()}")
 
 	if (!glfwInit()) {
 		println("ERROR - Failed to initialise GLFW!")
