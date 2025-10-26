@@ -26,6 +26,12 @@ tasks.register("generateCInteropDefs") {
 					libraryPaths = $gladDir
 
 					compilerOpts = -I$gladDir
+
+					---
+
+					void glShaderSourceK(GLenum shader, GLsizei count, const char* string, const GLint *length) {
+						glShaderSource(shader, count, &string, length);
+					}
 				""".trimIndent()
 			)
 			println("Generated gl.def")
@@ -45,6 +51,10 @@ tasks.register("generateCInteropDefs") {
 					    vec2 pos;
 					    vec3 col;
 					} Vertex;
+
+					size_t cSizeOf(Vertex vertices[3]) {
+						return sizeof(vertices);
+					}
 				""".trimIndent()
 			)
 			println("Generated linearmaths.def")

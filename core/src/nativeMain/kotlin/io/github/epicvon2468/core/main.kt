@@ -13,6 +13,7 @@ import gl.glCompileShader
 import gl.glCreateShader
 import gl.glGenBuffers
 import gl.glShaderSource
+import gl.glShaderSourceK
 import gl.gladLoadGL
 import glfw.glfwGetProcAddress
 import glfw.glfwGetVersion
@@ -162,19 +163,14 @@ fun glfwMain(): Nothing {
 		val vertexBuffer: GLuintVar = alloc<GLuintVar>()
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
-		//size_t cSizeOf(Vertex vertices[3]) {
-		//	return sizeof(vertices);
-		//}
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
 	}
 
-//	memScoped {
-//		val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
-//		val text: CPointer<ByteVar>? = vertex_shader_text
-//		val kText: CPointer<ByteVar> = VERTEX_SHADER.cstr.ptr
-//		glShaderSource!!.invoke(vertexShader, 1, null, null)
-//		glCompileShader!!.invoke(vertexShader)
-//	}
+	memScoped {
+		val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+		glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
+		glCompileShader!!.invoke(vertexShader)
+	}
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
