@@ -5,13 +5,20 @@ import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
 import gl.GL_STATIC_DRAW
 import gl.GL_VERTEX_SHADER
+import gl.GLint
 import gl.GLuint
 import gl.GLuintVar
+import gl.glAttachShader
 import gl.glBindBuffer
 import gl.glBufferData
 import gl.glCompileShader
+import gl.glCreateProgram
 import gl.glCreateShader
 import gl.glGenBuffers
+import gl.glGenVertexArrays
+import gl.glGetAttribLocation
+import gl.glGetUniformLocation
+import gl.glLinkProgram
 import gl.glShaderSource
 import gl.glShaderSourceK
 import gl.gladLoadGL
@@ -173,6 +180,15 @@ fun glfwMain(): Nothing {
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
 	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
 	glCompileShader!!.invoke(fragmentShader)
+
+	val program: GLuint = glCreateProgram!!.invoke()
+	glAttachShader!!.invoke(program, vertexShader)
+	glAttachShader!!.invoke(program, fragmentShader)
+	glLinkProgram!!.invoke(program)
+
+	val mvpLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, "MVP".cstr.ptr) }
+	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vPos".cstr.ptr) }
+	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr) }
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
