@@ -2,6 +2,17 @@
 package io.github.epicvon2468.core
 
 import gl.GLADapiproc
+import gl.GL_ARRAY_BUFFER
+import gl.GL_STATIC_DRAW
+import gl.GL_VERTEX_SHADER
+import gl.GLuint
+import gl.GLuintVar
+import gl.glBindBuffer
+import gl.glBufferData
+import gl.glCompileShader
+import gl.glCreateShader
+import gl.glGenBuffers
+import gl.glShaderSource
 import gl.gladLoadGL
 import glfw.glfwGetProcAddress
 import glfw.glfwGetVersion
@@ -25,21 +36,33 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.CPointerVarOf
+import kotlinx.cinterop.CValues
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.NativePlacement
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
+import kotlinx.cinterop.cstr
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.get
+import kotlinx.cinterop.getBytes
+import kotlinx.cinterop.invoke
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.set
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
+import kotlinx.cinterop.value
 
 import linearmaths.Vertex
+import linearmaths.cSizeOf
 import linearmaths.vec2
 import linearmaths.vec3
+import linearmaths.vertex_shader_text
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
@@ -93,11 +116,7 @@ val vertices: CArrayPointer<Vertex> = nativeHeap.vertexArrayOf(
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
-// Just some tests for GLFW interop.
-// https://www.glfw.org/docs/latest/quick_guide.html
-// https://dri.freedesktop.org/wiki/libGL/
-// https://www.opengl.org/sdk/
-// https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
+// Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
 	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
@@ -109,11 +128,14 @@ fun main() {
 	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
 	println("Version: ${version.contentToString()}")
 
-	//glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), TODO(), vertices, GL_STATIC_DRAW.toUInt())
-
 	glfwMain()
 }
 
+// Just some tests for GLFW interop.
+// https://www.glfw.org/docs/latest/quick_guide.html
+// https://dri.freedesktop.org/wiki/libGL/
+// https://www.opengl.org/sdk/
+// https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 fun glfwMain(): Nothing {
 	if (!glfwInit()) {
 		println("ERROR - Failed to initialise GLFW!")
@@ -140,6 +162,24 @@ fun glfwMain(): Nothing {
 
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
+	memScoped {
+		val vertexBuffer: GLuintVar = alloc<GLuintVar>().reinterpret<GLuintVar>()
+		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
+		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
+		//size_t cSizeOf(Vertex vertices[3]) {
+		//	return sizeof(vertices);
+		//}
+		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
+	}
+
+//	memScoped {
+//		val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+//		val text: CPointer<ByteVar>? = vertex_shader_text
+//		val kText: CPointer<ByteVar> = VERTEX_SHADER.cstr.ptr
+//		glShaderSource!!.invoke(vertexShader, 1, null, null)
+//		glCompileShader!!.invoke(vertexShader)
+//	}
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
 		glfwPollEvents()
@@ -150,3 +190,5 @@ fun glfwMain(): Nothing {
 
 	exitProcess(EXIT_SUCCESS)
 }
+
+typealias NeededStringType = CPointer<CPointerVarOf<CPointer<ByteVar>> /* from: CPointerVar<ByteVar> */>?
