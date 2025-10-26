@@ -5,6 +5,7 @@ import gl.GLADapiproc
 import gl.gladLoadGL
 import glfw.glfwGetProcAddress
 
+import io.github.epicvon2468.core.interop.exitProcess
 import io.github.epicvon2468.core.interop.gl.glGetString
 import io.github.epicvon2468.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.core.interop.glfw.context.glfwSwapInterval
@@ -28,8 +29,6 @@ import kotlinx.cinterop.toKString
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
-
-import kotlin.system.exitProcess
 
 const val VERTEX_SHADER: String = "#version 330\nuniform mat4 MVP;\nin vec3 vCol;\nin vec2 vPos;\nout vec3 color;\nvoid main() {\ngl_Position = MVP * vec4(vPos, 0.0, 1.0);\ncolor = vCol;\n}"
 
