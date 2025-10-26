@@ -170,6 +170,10 @@ fun glfwMain(): Nothing {
 	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
 	glCompileShader!!.invoke(vertexShader)
 
+	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
+	glCompileShader!!.invoke(fragmentShader)
+
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window)
 		glfwPollEvents()
