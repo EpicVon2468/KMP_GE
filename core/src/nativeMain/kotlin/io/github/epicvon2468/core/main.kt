@@ -37,7 +37,6 @@ import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointerVarOf
-import kotlinx.cinterop.CValues
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.alloc
@@ -48,11 +47,9 @@ import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.get
-import kotlinx.cinterop.getBytes
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.set
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
@@ -62,7 +59,6 @@ import linearmaths.Vertex
 import linearmaths.cSizeOf
 import linearmaths.vec2
 import linearmaths.vec3
-import linearmaths.vertex_shader_text
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
@@ -163,7 +159,7 @@ fun glfwMain(): Nothing {
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
 	memScoped {
-		val vertexBuffer: GLuintVar = alloc<GLuintVar>().reinterpret<GLuintVar>()
+		val vertexBuffer: GLuintVar = alloc<GLuintVar>()
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 		//size_t cSizeOf(Vertex vertices[3]) {
