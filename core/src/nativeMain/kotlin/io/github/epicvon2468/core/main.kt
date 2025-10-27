@@ -148,14 +148,14 @@ fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAdd
 // Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
-	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
-	nativeHeap.free(vec2)
-
-	println("GLFW version string: ${glfwGetVersionString()}")
-
-	val version = IntArray(3)
-	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
-	println("Version: ${version.contentToString()}")
+//	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
+//	nativeHeap.free(vec2)
+//
+//	println("GLFW version string: ${glfwGetVersionString()}")
+//
+//	val version = IntArray(3)
+//	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
+//	println("Version: ${version.contentToString()}")
 
 	glfwMain()
 }
@@ -232,6 +232,7 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
 
 	while (!glfwWindowShouldClose(window)) {
+		println("top")
 		val width: IntVar = nativeHeap.alloc()
 		val height: IntVar = nativeHeap.alloc()
 		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
@@ -243,23 +244,37 @@ fun glfwMain(): Nothing {
 		nativeHeap.free(width)
 		nativeHeap.free(height)
 
+		println("Pre memScoped {}")
 		memScoped {
+			println("Pre m")
 			val m: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			println("Pre p")
 			val p: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			println("Pre mvp")
 			val mvp: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			println("Post mvp")
 			mat4x4_identity(m)
 			mat4x4_rotate_Z(m, m, glfwGetTime().toFloat())
 			mat4x4_ortho(p, -ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f)
 			mat4x4_mul(mvp, p, m)
 
 			glUseProgram!!.invoke(program)
+			println("Pre uniform")
 			glUniformMatrix4fv!!.invoke(mvpLocation, 1, GL_FALSE.toUByte(), mvp)
+			println("Post uniform")
 		}
+		println("Post memScoped {}")
 		glBindVertexArray!!.invoke(vertexArray.value)
+		println("post bindVertex")
 		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
+		println("post drawArrays")
 
+		// Error occurs here
+		// Ranges from: 'free(): invalid next size (fast)' to 'malloc(): unaligned tcache chunk detected'
 		glfwSwapBuffers(window)
+		println("post swapBuffers")
 		glfwPollEvents()
+		println("bottom")
 	}
 
 	nativeHeap.free(vertexArray)
