@@ -106,9 +106,24 @@ import linearmaths.vertexPosOffset
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
 
-const val VERTEX_SHADER: String = "#version 330\nuniform mat4 MVP;\nin vec3 vCol;\nin vec2 vPos;\nout vec3 color;\nvoid main() {\ngl_Position = MVP * vec4(vPos, 0.0, 1.0);\ncolor = vCol;\n}"
+const val VERTEX_SHADER: String =
+	"#version 330\n" +
+	"uniform mat4 MVP;\n" +
+	"in vec3 vCol;\n" +
+	"in vec2 vPos;\n" +
+	"out vec3 color;\n" +
+	"void main() {\n" +
+	"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n" +
+	"    color = vCol;\n" +
+	"}\n"
 
-const val FRAGMENT_SHADER: String = "#version 330\nin vec3 color;\nout vec4 fragment;\nvoid main() {\nfragment = vec4(color, 1.0);\n}"
+const val FRAGMENT_SHADER: String =
+	"#version 330\n" +
+	"in vec3 color;\n" +
+	"out vec4 fragment;\n" +
+	"void main() {\n" +
+	"    fragment = vec4(color, 1.0);\n" +
+	"}\n"
 
 fun vec2.set(first: Float, second: Float) {
 	this[0] = first
@@ -224,6 +239,7 @@ fun glfwMain(): Nothing {
 		val status: IntVar = alloc()
 		func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
 		println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
+		if (status.value == GL_FALSE) exitProcess(EXIT_FAILURE)
 	}
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
