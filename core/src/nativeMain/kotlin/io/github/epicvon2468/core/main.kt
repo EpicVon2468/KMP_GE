@@ -8,6 +8,7 @@ import gl.GL_COMPILE_STATUS
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_FRAGMENT_SHADER
+import gl.GL_INFO_LOG_LENGTH
 import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
 import gl.GL_TRUE
@@ -35,6 +36,7 @@ import gl.glGenBuffers
 import gl.glGenVertexArrays
 import gl.glGetAttribLocation
 import gl.glGetProgramiv
+import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
 import gl.glGetUniformLocation
 import gl.glLinkProgram
@@ -239,7 +241,15 @@ fun glfwMain(): Nothing {
 		val status: IntVar = alloc()
 		func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
 		println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
-		if (status.value == GL_FALSE) exitProcess(EXIT_FAILURE)
+		if (status.value == GL_FALSE) {
+			val totalLength: IntVar = alloc()
+			glGetShaderiv!!.invoke(obj, GL_INFO_LOG_LENGTH.toUInt(), totalLength.ptr)
+			println("Getting error log!")
+			val errorLog: CArrayPointer<ByteVar> = allocArray(totalLength.value)
+			glGetShaderInfoLog!!.invoke(obj, totalLength.value, totalLength.ptr, errorLog)
+			println("Error log: '${errorLog.toKString()}'")
+			exitProcess(EXIT_FAILURE)
+		}
 	}
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
