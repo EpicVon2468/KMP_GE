@@ -5,6 +5,7 @@ import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
 import gl.GL_COLOR_BUFFER_BIT
 import gl.GL_COMPILE_STATUS
+import gl.GL_DEBUG_OUTPUT
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_FRAGMENT_SHADER
@@ -31,6 +32,7 @@ import gl.glCreateProgram
 import gl.glCreateShader
 import gl.glDebugMessageCallback
 import gl.glDrawArrays
+import gl.glEnable
 import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
@@ -46,6 +48,7 @@ import gl.glUseProgram
 import gl.glVertexAttribPointer
 import gl.glViewport
 import gl.gladLoadGL
+import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetFramebufferSize
 import glfw.glfwGetProcAddress
 import glfw.glfwGetTime
@@ -66,6 +69,10 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwGetVersionString
 import io.github.epicvon2468.core.interop.glfw.init.glfwInit
 import io.github.epicvon2468.core.interop.glfw.init.glfwSetErrorCallback
 import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
+import io.github.epicvon2468.core.interop.glfw.window.GLFW_CONTEXT_VERSION_MAJOR
+import io.github.epicvon2468.core.interop.glfw.window.GLFW_CONTEXT_VERSION_MINOR
+import io.github.epicvon2468.core.interop.glfw.window.GLFW_OPENGL_PROFILE
+import io.github.epicvon2468.core.interop.glfw.window.glfwWindowHint
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
@@ -203,6 +210,9 @@ fun glfwMain(): Nothing {
 		println("ERROR - GLFWErrorFun: (errorCode: '$errorCode', message: '$description')")
 	}
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
 	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
 	val window: GLFWWindowC? = glfwCreateWindow(1920, 1080, "KMP_GE") as GLFWWindowC?
 	if (window == null) {
@@ -216,12 +226,15 @@ fun glfwMain(): Nothing {
 	// V-Sync.
 	glfwSwapInterval(1)
 
+	// WHY IN THE ACTUAL FUCK IS THIS NOT ON BY DEFAULT?!?!?!
+	glEnable!!.invoke(GL_DEBUG_OUTPUT.toUInt())
+
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
 	glDebugMessageCallback!!.invoke(
 		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: CPointer<ByteVar>?, userParam: COpaquePointer? ->
 			println("ERROR - GL error callback invoked! Error info:")
-			println("DebugProc {\nsource = $source,\ntype = $type,\nid = $id,\nseverity = $severity,\nlength = $length,\nmessage = '${message?.toKString()}',\nuserParam = $userParam\n}")
+			println("DebugProc {\n\tsource = $source,\n\ttype = $type,\n\tid = $id,\n\tseverity = $severity,\n\tlength = $length,\n\tmessage = '${message?.toKString()}',\n\tuserParam = $userParam\n}")
 		},
 		null
 	)
