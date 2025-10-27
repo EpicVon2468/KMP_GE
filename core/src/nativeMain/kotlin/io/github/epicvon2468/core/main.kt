@@ -10,6 +10,8 @@ import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
 import gl.GL_VERTEX_SHADER
 import gl.GLenum
+import gl.GLfloat
+import gl.GLfloatVar
 import gl.GLint
 import gl.GLsizei
 import gl.GLuint
@@ -62,6 +64,7 @@ import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.FloatVar
 import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.alloc
@@ -236,6 +239,7 @@ fun glfwMain(): Nothing {
 		val width: IntVar = nativeHeap.alloc()
 		val height: IntVar = nativeHeap.alloc()
 		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+		println("Size: (${width.value}x${height.value})")
 		val ratio: Float = (width.value / height.value).toFloat()
 
 		glViewport!!.invoke(0, 0, width.value, height.value)
@@ -247,11 +251,11 @@ fun glfwMain(): Nothing {
 		println("Pre memScoped {}")
 		memScoped {
 			println("Pre m")
-			val m: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			val m: CArrayPointer<FloatVar> = allocArray(4L)
 			println("Pre p")
-			val p: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			val p: mat4x4 = allocArray(4L)
 			println("Pre mvp")
-			val mvp: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+			val mvp: mat4x4 = allocArray(4L)
 			println("Post mvp")
 			mat4x4_identity(m)
 			mat4x4_rotate_Z(m, m, glfwGetTime().toFloat())
@@ -270,19 +274,31 @@ fun glfwMain(): Nothing {
 		println("post drawArrays")
 
 		// Error occurs here
-		// Ranges from: 'free(): invalid next size (fast)' to 'malloc(): unaligned tcache chunk detected'
+		// Currently seen errors:
+		// 'free(): invalid next size (fast)'
+		// 'malloc(): unaligned tcache chunk detected'
+		// 'munmap_chunk(): invalid pointer'
 		glfwSwapBuffers(window)
 		println("post swapBuffers")
+		// 'realloc(): invalid next size'
 		glfwPollEvents()
 		println("bottom")
+		// 'double free or corruption (out)' - not sure where this happened
 	}
 
+	println("pre free vertexArray")
 	nativeHeap.free(vertexArray)
+	println("post free vertexArray")
 
+	println("pre glfwDestroyWindow")
+	// 'free(): invalid next size (fast)'
 	glfwDestroyWindow(window)
+	println("pre glfwTerminate")
 	glfwTerminate()
 
+	println("pre free vertices")
 	nativeHeap.free(vertices)
+	println("post free vertices")
 
 	exitProcess(EXIT_SUCCESS)
 }
