@@ -210,8 +210,8 @@ fun glfwMain(): Nothing {
 		println("ERROR - GLFWErrorFun: (errorCode: '$errorCode', message: '$description')")
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
 	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
 	val window: GLFWWindowC? = glfwCreateWindow(1920, 1080, "KMP_GE") as GLFWWindowC?
