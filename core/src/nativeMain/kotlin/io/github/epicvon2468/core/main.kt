@@ -233,7 +233,7 @@ fun glfwMain(): Nothing {
 
 	glDebugMessageCallback!!.invoke(
 		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: CPointer<ByteVar>?, userParam: COpaquePointer? ->
-			println("ERROR - GL error callback invoked! Error info:")
+			println("GL debug callback invoked! Debug info:")
 			println("DebugProc {\n\tsource = $source,\n\ttype = $type,\n\tid = $id,\n\tseverity = $severity,\n\tlength = $length,\n\tmessage = '${message?.toKString()}',\n\tuserParam = $userParam\n}")
 		},
 		null
@@ -285,6 +285,7 @@ fun glfwMain(): Nothing {
 	glAttachShader!!.invoke(program, fragmentShader)
 	glLinkProgram!!.invoke(program)
 
+	// Error only logs at this point
 	// Obj 'Shader Program' (3) compile status: failure.
 	checkCompile(glGetProgramiv!!, program, "Shader Program")
 
