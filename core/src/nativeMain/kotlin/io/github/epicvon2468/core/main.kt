@@ -7,6 +7,7 @@ import gl.GL_COLOR_BUFFER_BIT
 import gl.GL_COMPILE_STATUS
 import gl.GL_FALSE
 import gl.GL_FLOAT
+import gl.GL_FRAGMENT_SHADER
 import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
 import gl.GL_TRUE
@@ -232,7 +233,7 @@ fun glfwMain(): Nothing {
 	// Obj 'Vertex Shader' (1) compile status: success.
 	checkCompile(glGetShaderiv!!, vertexShader, "Vertex Shader")
 
-	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
 	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
 	glCompileShader!!.invoke(fragmentShader)
 
