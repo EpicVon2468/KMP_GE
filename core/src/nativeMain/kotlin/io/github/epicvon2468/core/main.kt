@@ -226,9 +226,9 @@ fun glfwMain(): Nothing {
 	println("Actually exits (program edition): $program, $fragmentShader, $vertexShader")
 
 	// We have our culprit.
-	val mvpLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, allocArrayOf("MVP".encodeToByteArray())) }
-	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, allocArrayOf("vPos".encodeToByteArray())) }
-	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, allocArrayOf("vCol".encodeToByteArray())) }
+	val mvpLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, "MVP".cstr.ptr) }
+	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vPos".cstr.ptr) }
+	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr) }
 
 	// Outputted -1, -1, -1
 	println("Actually exists: $mvpLocation, $vPosLocation, $vColLocation")
