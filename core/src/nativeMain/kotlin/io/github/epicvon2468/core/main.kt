@@ -179,6 +179,25 @@ val vertices: CArrayPointer<Vertex> = nativeHeap.vertexArrayOf(
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
+fun checkCompile(
+	func: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
+	obj: GLuint,
+	name: String
+) = memScoped {
+	val status: IntVar = alloc()
+	func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
+	println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
+	if (status.value == GL_FALSE) {
+		val totalLength: IntVar = alloc()
+		glGetShaderiv!!.invoke(obj, GL_INFO_LOG_LENGTH.toUInt(), totalLength.ptr)
+		println("Getting error log!")
+		val errorLog: CArrayPointer<ByteVar> = allocArray(totalLength.value)
+		glGetShaderInfoLog!!.invoke(obj, totalLength.value, totalLength.ptr, errorLog)
+		println("Error log: '${errorLog.toKString()}'")
+		exitProcess(EXIT_FAILURE)
+	}
+}
+
 // Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
@@ -244,25 +263,6 @@ fun glfwMain(): Nothing {
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
-	}
-
-	fun checkCompile(
-		func: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
-		obj: GLuint,
-		name: String
-	) = memScoped {
-		val status: IntVar = alloc()
-		func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
-		println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
-		if (status.value == GL_FALSE) {
-			val totalLength: IntVar = alloc()
-			glGetShaderiv!!.invoke(obj, GL_INFO_LOG_LENGTH.toUInt(), totalLength.ptr)
-			println("Getting error log!")
-			val errorLog: CArrayPointer<ByteVar> = allocArray(totalLength.value)
-			glGetShaderInfoLog!!.invoke(obj, totalLength.value, totalLength.ptr, errorLog)
-			println("Error log: '${errorLog.toKString()}'")
-			exitProcess(EXIT_FAILURE)
-		}
 	}
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
