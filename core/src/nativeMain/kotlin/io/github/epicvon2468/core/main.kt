@@ -9,7 +9,9 @@ import gl.GL_FLOAT
 import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
 import gl.GL_VERTEX_SHADER
+import gl.GLenum
 import gl.GLint
+import gl.GLsizei
 import gl.GLuint
 import gl.GLuintVar
 import gl.glAttachShader
@@ -20,6 +22,7 @@ import gl.glClear
 import gl.glCompileShader
 import gl.glCreateProgram
 import gl.glCreateShader
+import gl.glDebugMessageCallback
 import gl.glDrawArrays
 import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
@@ -59,7 +62,6 @@ import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointerVarOf
-import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.NativePlacement
@@ -190,6 +192,14 @@ fun glfwMain(): Nothing {
 
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
+	glDebugMessageCallback!!.invoke(
+		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: CPointer<ByteVar>?, userParam: COpaquePointer? ->
+			println("ERROR - GL error callback invoked! Error info:")
+			println("DebugProc {\nsource = $source,\ntype = $type,\nid = $id,\nseverity = $severity,\nlength = $length,\nmessage = '${message?.toKString()}',\nuserParam = $userParam\n}")
+		},
+		null
+	)
+
 	memScoped {
 		val vertexBuffer: GLuintVar = alloc()
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
@@ -223,16 +233,16 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
 
 	while (!glfwWindowShouldClose(window)) {
-		val ratio: Float = memScoped {
-			val width: IntVar = alloc()
-			val height: IntVar = alloc()
-			glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+		val width: IntVar = nativeHeap.alloc()
+		val height: IntVar = nativeHeap.alloc()
+		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+		val ratio: Float = (width.value / height.value).toFloat()
 
-			glViewport!!.invoke(0, 0, width.value, height.value)
-
-			width.value / height.value
-		}.toFloat()
+		glViewport!!.invoke(0, 0, width.value, height.value)
 		glClear!!.invoke(GL_COLOR_BUFFER_BIT.toUInt())
+
+		nativeHeap.free(width)
+		nativeHeap.free(height)
 
 		memScoped {
 			val m: mat4x4 = allocArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
