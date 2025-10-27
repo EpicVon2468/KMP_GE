@@ -222,9 +222,16 @@ fun glfwMain(): Nothing {
 	glAttachShader!!.invoke(program, fragmentShader)
 	glLinkProgram!!.invoke(program)
 
-	val mvpLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, "MVP".cstr.ptr) }
-	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vPos".cstr.ptr) }
-	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr) }
+	// Outputted 3, 2, 1
+	println("Actually exits (program edition): $program, $fragmentShader, $vertexShader")
+
+	// We have our culprit.
+	val mvpLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, allocArrayOf("MVP".encodeToByteArray())) }
+	val vPosLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, allocArrayOf("vPos".encodeToByteArray())) }
+	val vColLocation: GLint = memScoped { glGetAttribLocation!!.invoke(program, allocArrayOf("vCol".encodeToByteArray())) }
+
+	// Outputted -1, -1, -1
+	println("Actually exists: $mvpLocation, $vPosLocation, $vColLocation")
 
 	val vertexArray: GLuintVar = nativeHeap.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
@@ -235,11 +242,9 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
 
 	while (!glfwWindowShouldClose(window)) {
-		println("top")
 		val width: IntVar = nativeHeap.alloc()
 		val height: IntVar = nativeHeap.alloc()
 		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
-		println("Size: (${width.value}x${height.value})")
 		val ratio: Float = (width.value / height.value).toFloat()
 
 		glViewport!!.invoke(0, 0, width.value, height.value)
@@ -248,57 +253,31 @@ fun glfwMain(): Nothing {
 		nativeHeap.free(width)
 		nativeHeap.free(height)
 
-		println("Pre memScoped {}")
 		memScoped {
-			println("Pre m")
 			val m: CArrayPointer<FloatVar> = allocArray(4L)
-			println("Pre p")
 			val p: mat4x4 = allocArray(4L)
-			println("Pre mvp")
 			val mvp: mat4x4 = allocArray(4L)
-			println("Post mvp")
 			mat4x4_identity(m)
 			mat4x4_rotate_Z(m, m, glfwGetTime().toFloat())
 			mat4x4_ortho(p, -ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f)
 			mat4x4_mul(mvp, p, m)
 
 			glUseProgram!!.invoke(program)
-			println("Pre uniform")
 			glUniformMatrix4fv!!.invoke(mvpLocation, 1, GL_FALSE.toUByte(), mvp)
-			println("Post uniform")
 		}
-		println("Post memScoped {}")
 		glBindVertexArray!!.invoke(vertexArray.value)
-		println("post bindVertex")
 		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
-		println("post drawArrays")
 
-		// Error occurs here
-		// Currently seen errors:
-		// 'free(): invalid next size (fast)'
-		// 'malloc(): unaligned tcache chunk detected'
-		// 'munmap_chunk(): invalid pointer'
 		glfwSwapBuffers(window)
-		println("post swapBuffers")
-		// 'realloc(): invalid next size'
 		glfwPollEvents()
-		println("bottom")
-		// 'double free or corruption (out)' - not sure where this happened
 	}
 
-	println("pre free vertexArray")
 	nativeHeap.free(vertexArray)
-	println("post free vertexArray")
 
-	println("pre glfwDestroyWindow")
-	// 'free(): invalid next size (fast)'
 	glfwDestroyWindow(window)
-	println("pre glfwTerminate")
 	glfwTerminate()
 
-	println("pre free vertices")
 	nativeHeap.free(vertices)
-	println("post free vertices")
 
 	exitProcess(EXIT_SUCCESS)
 }
