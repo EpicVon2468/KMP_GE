@@ -4,15 +4,18 @@ package io.github.epicvon2468.core
 import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
 import gl.GL_COLOR_BUFFER_BIT
+import gl.GL_COMPILE_STATUS
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
+import gl.GL_TRUE
 import gl.GL_VERTEX_SHADER
 import gl.GLenum
 import gl.GLfloat
 import gl.GLfloatVar
 import gl.GLint
+import gl.GLintVar
 import gl.GLsizei
 import gl.GLuint
 import gl.GLuintVar
@@ -30,6 +33,8 @@ import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
 import gl.glGetAttribLocation
+import gl.glGetProgramiv
+import gl.glGetShaderiv
 import gl.glGetUniformLocation
 import gl.glLinkProgram
 import gl.glShaderSourceK
@@ -61,6 +66,7 @@ import io.github.epicvon2468.core.interop.glfw.init.glfwTerminate
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
+import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -209,23 +215,39 @@ fun glfwMain(): Nothing {
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
 	}
 
+	fun checkCompile(
+		func: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
+		obj: GLuint,
+		name: String
+	) = memScoped {
+		val status: IntVar = alloc()
+		func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
+		println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
+	}
+
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
 	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
 	glCompileShader!!.invoke(vertexShader)
+
+	// Obj 'Vertex Shader' (1) compile status: success.
+	checkCompile(glGetShaderiv!!, vertexShader, "Vertex Shader")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
 	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
 	glCompileShader!!.invoke(fragmentShader)
 
+	// Obj 'Fragment Shader' (2) compile status: success.
+	checkCompile(glGetShaderiv!!, fragmentShader, "Fragment Shader")
+
+	// This is the failure point.
 	val program: GLuint = glCreateProgram!!.invoke()
 	glAttachShader!!.invoke(program, vertexShader)
 	glAttachShader!!.invoke(program, fragmentShader)
 	glLinkProgram!!.invoke(program)
 
-	// Outputted 3, 2, 1
-	println("Actually exists (program edition): $program, $fragmentShader, $vertexShader")
+	// Obj 'Shader Program' (3) compile status: failure.
+	checkCompile(glGetProgramiv!!, program, "Shader Program")
 
-	// We have our culprit.
 	val (mvpLocation: GLint, vPosLocation: GLint, vColLocation: GLint) = memScoped {
 		Triple(
 			glGetUniformLocation!!.invoke(program, "MVP".cstr.ptr),
@@ -233,9 +255,6 @@ fun glfwMain(): Nothing {
 			glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr)
 		)
 	}
-
-	// Outputted -1, -1, -1
-	println("Actually exists: $mvpLocation, $vPosLocation, $vColLocation")
 
 	val vertexArray: GLuintVar = nativeHeap.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
