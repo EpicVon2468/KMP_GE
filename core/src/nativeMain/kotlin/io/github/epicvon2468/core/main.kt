@@ -61,7 +61,6 @@ import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.NativePlacement
@@ -272,5 +271,3 @@ fun glfwMain(): Nothing {
 
 	exitProcess(EXIT_SUCCESS)
 }
-
-typealias NeededStringType = CPointer<CPointerVarOf<CPointer<ByteVar>> /* from: CPointerVar<ByteVar> */>?
