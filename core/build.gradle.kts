@@ -1,10 +1,40 @@
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 
+// TODO: Fix package name
+
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
 	alias(libs.plugins.kotlinx.serialisation)
 	alias(libs.plugins.buildKonfig)
+}
+
+tasks.register("bakeInShaders") {
+	doFirst {
+		val projectDir = File(System.getProperty("user.dir"))
+		val out = projectDir.resolve("core/src/nativeMain/kotlin/io/github/epicvon2468/core/Shaders.kt")
+		fun writeShaderConstants(it: File, sb: StringBuilder) {
+			for (line in it.readText().split('\n')) {
+				if (line.isEmpty() || line == "\n") continue
+				val append = if (line.endsWith('\n')) line.substring(0..<line.lastIndex) else line
+				sb.append("\t\"$append\\n\" +\n")
+			}
+		}
+		projectDir.resolve("shader.vert").let {
+			out.delete()
+			out.createNewFile()
+			val sb = StringBuilder("package io.github.epicvon2468.core\n\nconst val VERTEX_SHADER: String =\n")
+			writeShaderConstants(it, sb)
+			out.writeText(sb.substring(0..<sb.lastIndex - 2) + "\n\n")
+		}
+		projectDir.resolve("shader.frag").let {
+			val sb = StringBuilder("const val FRAGMENT_SHADER: String =\n")
+			writeShaderConstants(it, sb)
+			out.appendText(sb.substring(0..<sb.lastIndex - 2))
+		}
+		didWork = true
+	}
+	finalizedBy("runDebugExecutableLinuxX64")
 }
 
 tasks.register("generateCInteropDefs") {
@@ -44,25 +74,6 @@ tasks.register("generateCInteropDefs") {
 					headers = linearmaths.h
 
 					compilerOpts = -I$core/c/include
-
-					---
-
-					typedef struct Vertex {
-					    vec2 pos;
-					    vec3 col;
-					} Vertex;
-
-					size_t cSizeOf(Vertex vertices[3]) {
-						return sizeof(vertices);
-					}
-
-					void* vertexPosOffset() {
-						return (void*) offsetof(Vertex, pos);
-					}
-
-					void* vertexColOffset() {
-						return (void*) offsetof(Vertex, col);
-					}
 				""".trimIndent()
 			)
 			println("Generated linearmaths.def")
