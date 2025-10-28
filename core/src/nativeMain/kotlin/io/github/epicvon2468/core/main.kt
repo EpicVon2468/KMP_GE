@@ -254,11 +254,8 @@ fun glfwMain(): Nothing {
 
 	val vertexBuffer: GLuintVar = nativeHeap.alloc()
 	glGenBuffers!!.invoke(1, vertexBuffer.ptr)
-	checkGLError("glGenBuffers")
 	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
-	checkGLError("glBindBuffer")
 	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), vertices, GL_STATIC_DRAW.toUInt())
-	checkGLError("glBufferData")
 
 	val vertexArray: GLuintVar = nativeHeap.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
@@ -268,9 +265,7 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(0U, 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), 0, null)
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
-	checkGLError("glCreateShader vertex")
 	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
-	checkGLError("glShaderSource vertex")
 	glCompileShader!!.invoke(vertexShader)
 	checkGLError("glCompileShader vertex")
 
@@ -279,9 +274,7 @@ fun glfwMain(): Nothing {
 	checkGLError("checkCompile vertex")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
-	checkGLError("glCreateShader fragment")
 	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
-	checkGLError("glShaderSource fragment")
 	glCompileShader!!.invoke(fragmentShader)
 	checkGLError("glCompileShader fragment")
 
@@ -291,11 +284,8 @@ fun glfwMain(): Nothing {
 
 	// This is the failure point.
 	val program: GLuint = glCreateProgram!!.invoke()
-	checkGLError("glCreateProgram")
 	glAttachShader!!.invoke(program, fragmentShader)
-	checkGLError("glAttachShader fragment")
 	glAttachShader!!.invoke(program, vertexShader)
-	checkGLError("glAttachShader vertex")
 	glLinkProgram!!.invoke(program)
 	checkGLError("glLinkProgram")
 
