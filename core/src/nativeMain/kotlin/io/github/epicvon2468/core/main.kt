@@ -6,6 +6,7 @@ import gl.GL_ARRAY_BUFFER
 import gl.GL_COLOR_BUFFER_BIT
 import gl.GL_COMPILE_STATUS
 import gl.GL_DEBUG_OUTPUT
+import gl.GL_DEBUG_OUTPUT_SYNCHRONOUS
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_FRAGMENT_SHADER
@@ -219,21 +220,21 @@ fun main() {
 // https://www.opengl.org/sdk/
 // https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 fun glfwMain(): Nothing {
-	if (!glfwInit()) {
-		println("ERROR - Failed to initialise GLFW!")
-		exitProcess(EXIT_FAILURE)
-	}
-
 	// To test this, window hint GLFW_CONTEXT_VERSION_MAJOR and GLFW_CONTEXT_VERSION_MINOR to something absurd like 99.
 	glfwSetErrorCallback { errorCode: Int, description: String? ->
 		println("ERROR - GLFWErrorFun: (errorCode: '$errorCode', message: '$description')")
+	}
+
+	if (!glfwInit()) {
+		println("ERROR - Failed to initialise GLFW!")
+		exitProcess(EXIT_FAILURE)
 	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
 	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
-	val window: GLFWWindowC? = glfwCreateWindow(1920, 1080, "KMP_GE") as GLFWWindowC?
+	val window: GLFWWindowC? = glfwCreateWindow(640, 480, "KMP_GE") as GLFWWindowC?
 	if (window == null) {
 		glfwTerminate()
 		println("ERROR - GLFWWindow failed to create!")
@@ -247,6 +248,7 @@ fun glfwMain(): Nothing {
 
 	// WHY IN THE ACTUAL FUCK IS THIS NOT ON BY DEFAULT?!?!?!
 	glEnable!!.invoke(GL_DEBUG_OUTPUT.toUInt())
+	glEnable!!.invoke(GL_DEBUG_OUTPUT_SYNCHRONOUS.toUInt())
 
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
