@@ -23,6 +23,7 @@ import gl.GL_TRIANGLES
 import gl.GL_TRUE
 import gl.GL_VERTEX_SHADER
 import gl.GLenum
+import gl.GLint
 import gl.GLsizei
 import gl.GLuint
 import gl.GLuintVar
@@ -45,8 +46,10 @@ import gl.glGetProgramInfoLog
 import gl.glGetProgramiv
 import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
+import gl.glGetUniformLocation
 import gl.glLinkProgram
 import gl.glShaderSourceK
+import gl.glUniform1f
 import gl.glUseProgram
 import gl.glVertexAttribPointer
 import gl.glViewport
@@ -54,6 +57,7 @@ import gl.gladLoadGL
 import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetFramebufferSize
 import glfw.glfwGetProcAddress
+import glfw.glfwGetTime
 import glfw.glfwGetVersion
 import glfw.glfwSetFramebufferSizeCallback
 
@@ -88,6 +92,7 @@ import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
+import kotlinx.cinterop.cstr
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
@@ -109,14 +114,20 @@ const val VERTEX_SHADER: String =
 	"#version 410 core\n" +
 	"in vec3 vp;\n" +
 	"void main() {\n" +
-	"    gl_Position = vec4(vp, 1.0);\n" +
+	"   gl_Position = vec4(vp, 1.0);\n" +
 	"}\n"
 
 const val FRAGMENT_SHADER: String =
 	"#version 410 core\n" +
+	"uniform float time;" +
 	"out vec4 frag_colour;\n" +
+	"vec3 colourA = vec3(0.149, 0.141, 0.912);\n" +
+	"vec3 colourB = vec3(1.000, 0.833, 0.224);\n" +
 	"void main() {\n" +
-	"    frag_colour = vec4(0.5, 0.0, 0.5, 1.0);\n" +
+	"	vec3 colour = vec3(0.0);\n" +
+	"	float pct = abs(sin(time));\n" +
+	"	colour = mix(colourA, colourB, pct);\n" +
+	"   frag_colour = vec4(colour, 1.0);\n" +
 	"}\n"
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
@@ -293,6 +304,9 @@ fun glfwMain(): Nothing {
 	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, program, "Shader Program")
 	checkGLError("checkCompile program")
 
+	val timeLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, "time".cstr.ptr) }
+	if (timeLocation == -1) error("Couldn't get uniform time location!")
+
 	// Do a first glViewport to fix alignment.
 	memScoped {
 		val width: IntVar = alloc()
@@ -305,6 +319,7 @@ fun glfwMain(): Nothing {
 		glClear!!.invoke(GL_COLOR_BUFFER_BIT.toUInt())
 
 		glUseProgram!!.invoke(program)
+		glUniform1f!!.invoke(timeLocation, glfwGetTime().toFloat())
 		glBindVertexArray!!.invoke(vertexArray.value)
 
 		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
