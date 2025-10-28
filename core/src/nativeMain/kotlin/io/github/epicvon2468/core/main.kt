@@ -11,16 +11,27 @@ import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_FRAGMENT_SHADER
 import gl.GL_INFO_LOG_LENGTH
+import gl.GL_INVALID_ENUM
+import gl.GL_INVALID_FRAMEBUFFER_OPERATION
+import gl.GL_INVALID_OPERATION
+import gl.GL_INVALID_VALUE
+import gl.GL_NO_ERROR
+import gl.GL_OUT_OF_MEMORY
+import gl.GL_STACK_OVERFLOW
+import gl.GL_STACK_UNDERFLOW
 import gl.GL_STATIC_DRAW
 import gl.GL_TRIANGLES
 import gl.GL_TRUE
 import gl.GL_VERTEX_SHADER
 import gl.GLenum
+import gl.GLenumVar
 import gl.GLfloat
 import gl.GLfloatVar
 import gl.GLint
 import gl.GLintVar
 import gl.GLsizei
+import gl.GLubyte
+import gl.GLubyteVar
 import gl.GLuint
 import gl.GLuintVar
 import gl.glAttachShader
@@ -38,6 +49,7 @@ import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
 import gl.glGetAttribLocation
+import gl.glGetError
 import gl.glGetProgramiv
 import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
@@ -199,6 +211,21 @@ fun checkCompile(
 	}
 }
 
+fun checkGLError(place: String) {
+	val error: GLenum = glGetError!!.invoke()
+	when (error.toInt()) {
+		GL_NO_ERROR -> return
+		GL_INVALID_ENUM -> "INVALID ENUM"
+		GL_INVALID_VALUE -> "INVALID VALUE"
+		GL_INVALID_OPERATION -> "INVALID OPERATION"
+		GL_STACK_UNDERFLOW -> "STACK UNDERFLOW"
+		GL_STACK_OVERFLOW -> "STACK OVERFLOW"
+		GL_OUT_OF_MEMORY -> "OUT OF MEMORY"
+		GL_INVALID_FRAMEBUFFER_OPERATION -> "INVALID FRAMEBUFFER OPERATION"
+		else -> throw IllegalStateException("Couldn't match GL error code, got unknown value: '$error'!")
+	}.let { println("GL errored at '$place'! Error: $it") }
+}
+
 // Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
@@ -263,33 +290,49 @@ fun glfwMain(): Nothing {
 	memScoped {
 		val vertexBuffer: GLuintVar = alloc()
 		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
+		checkGLError("glGenBuffers")
 		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
+		checkGLError("glBindBuffer")
 		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
+		checkGLError("glBufferData")
 	}
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+	checkGLError("glCreateShader vertex")
 	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
+	checkGLError("glShaderSource vertex")
 	glCompileShader!!.invoke(vertexShader)
+	checkGLError("glCompileShader vertex")
 
 	// Obj 'Vertex Shader' (1) compile status: success.
 	checkCompile(glGetShaderiv!!, vertexShader, "Vertex Shader")
+	checkGLError("checkCompile vertex")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
+	checkGLError("glCreateShader fragment")
 	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
+	checkGLError("glShaderSource fragment")
 	glCompileShader!!.invoke(fragmentShader)
+	checkGLError("glCompileShader fragment")
 
 	// Obj 'Fragment Shader' (2) compile status: success.
 	checkCompile(glGetShaderiv!!, fragmentShader, "Fragment Shader")
+	checkGLError("checkCompile fragment")
 
 	// This is the failure point.
 	val program: GLuint = glCreateProgram!!.invoke()
+	checkGLError("glCreateProgram")
 	glAttachShader!!.invoke(program, vertexShader)
+	checkGLError("glAttachShader vertex")
 	glAttachShader!!.invoke(program, fragmentShader)
+	checkGLError("glAttachShader fragment")
 	glLinkProgram!!.invoke(program)
+	checkGLError("glLinkProgram")
 
 	// Error only logs at this point
 	// Obj 'Shader Program' (3) compile status: failure.
 	checkCompile(glGetProgramiv!!, program, "Shader Program")
+	checkGLError("checkCompile program")
 
 	val (mvpLocation: GLint, vPosLocation: GLint, vColLocation: GLint) = memScoped {
 		Triple(
@@ -298,6 +341,7 @@ fun glfwMain(): Nothing {
 			glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr)
 		)
 	}
+	checkGLError("glGetUniformLocation, glGetAttribLocation x2")
 
 	val vertexArray: GLuintVar = nativeHeap.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
