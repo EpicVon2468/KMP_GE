@@ -206,6 +206,8 @@ fun checkGLError(place: String) {
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
 	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
+	require(vec2[0] == -0.6f)
+	require(vec2[1] == -0.4f)
 	nativeHeap.free(vec2)
 
 	println("GLFW version string: ${glfwGetVersionString()}")
@@ -223,6 +225,9 @@ fun Int.glBoolean(): Boolean = when (this) {
 	else -> error("Couldn't parse GL boolean '$this', expected either '$GL_TRUE' (true) or '$GL_FALSE' (false)!")
 }
 
+// TODO: Before abstracting this into the library, the cause of the error needs to be found first. Whilst it does show
+//		the triangle on-screen, I can't just leave everything as-is; If this is a problem with my allocation, I need to
+//		find out now, rather than when I've written a whole abstraction wrong.
 // Just some tests for GLFW interop.
 // https://www.glfw.org/docs/latest/quick_guide.html
 // https://dri.freedesktop.org/wiki/libGL/
