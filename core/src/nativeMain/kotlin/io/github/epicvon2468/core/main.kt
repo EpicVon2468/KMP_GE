@@ -123,29 +123,22 @@ import linearmaths.mat4x4_ortho
 import linearmaths.mat4x4_rotate_Z
 import linearmaths.vec2
 import linearmaths.vec3
-import linearmaths.vertexColOffset
-import linearmaths.vertexPosOffset
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
 
 const val VERTEX_SHADER: String =
-	"#version 330\n" +
-	"uniform mat4 MVP;\n" +
-	"in vec3 vCol;\n" +
-	"in vec2 vPos;\n" +
-	"out vec3 color;\n" +
+	"#version 410 core\n" +
+	"in vec3 vp;\n" +
 	"void main() {\n" +
-	"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n" +
-	"    color = vCol;\n" +
+	"    gl_Position = vec4(vp, 1.0);\n" +
 	"}\n"
 
 const val FRAGMENT_SHADER: String =
-	"#version 330\n" +
-	"in vec3 color;\n" +
-	"out vec4 fragment;\n" +
+	"#version 410 core\n" +
+	"out vec4 frag_color;\n" +
 	"void main() {\n" +
-	"    fragment = vec4(color, 1.0);\n" +
+	"    frag_color = vec4(0.5, 0.0, 0.5, 1.0);\n" +
 	"}\n"
 
 fun vec2.set(first: Float, second: Float) {
@@ -302,15 +295,26 @@ fun glfwMain(): Nothing {
 		null
 	)
 
-	memScoped {
-		val vertexBuffer: GLuintVar = alloc()
-		glGenBuffers!!.invoke(1, vertexBuffer.ptr)
-		checkGLError("glGenBuffers")
-		glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
-		checkGLError("glBindBuffer")
-		glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), cSizeOf(vertices).toLong(), vertices, GL_STATIC_DRAW.toUInt())
-		checkGLError("glBufferData")
-	}
+	val points: CArrayPointer<FloatVar> = nativeHeap.allocArrayOf(
+		0.0f, 0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f
+	)
+
+	val vertexBuffer: GLuintVar = nativeHeap.alloc()
+	glGenBuffers!!.invoke(1, vertexBuffer.ptr)
+	checkGLError("glGenBuffers")
+	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
+	checkGLError("glBindBuffer")
+	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), points, GL_STATIC_DRAW.toUInt())
+	checkGLError("glBufferData")
+
+	val vertexArray: GLuintVar = nativeHeap.alloc()
+	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
+	glBindVertexArray!!.invoke(vertexArray.value)
+	glEnableVertexAttribArray!!.invoke(0U)
+	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
+	glVertexAttribPointer!!.invoke(0U, 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), 0, null)
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
 	checkGLError("glCreateShader vertex")
@@ -337,10 +341,10 @@ fun glfwMain(): Nothing {
 	// This is the failure point.
 	val program: GLuint = glCreateProgram!!.invoke()
 	checkGLError("glCreateProgram")
-	glAttachShader!!.invoke(program, vertexShader)
-	checkGLError("glAttachShader vertex")
 	glAttachShader!!.invoke(program, fragmentShader)
 	checkGLError("glAttachShader fragment")
+	glAttachShader!!.invoke(program, vertexShader)
+	checkGLError("glAttachShader vertex")
 	glLinkProgram!!.invoke(program)
 	checkGLError("glLinkProgram")
 
@@ -349,48 +353,20 @@ fun glfwMain(): Nothing {
 	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, program, "Shader Program")
 	checkGLError("checkCompile program")
 
-	val (mvpLocation: GLint, vPosLocation: GLint, vColLocation: GLint) = memScoped {
-		Triple(
-			glGetUniformLocation!!.invoke(program, "MVP".cstr.ptr),
-			glGetAttribLocation!!.invoke(program, "vPos".cstr.ptr),
-			glGetAttribLocation!!.invoke(program, "vCol".cstr.ptr)
-		)
+	// Do a first glViewport to fix alignment.
+	memScoped {
+		val width: IntVar = alloc()
+		val height: IntVar = alloc()
+		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+		glViewport!!.invoke(0, 0, width.value, height.value)
 	}
-	checkGLError("glGetUniformLocation, glGetAttribLocation x2")
-
-	val vertexArray: GLuintVar = nativeHeap.alloc()
-	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
-	glBindVertexArray!!.invoke(vertexArray.value)
-	glEnableVertexAttribArray!!.invoke(vPosLocation.toUInt())
-	glVertexAttribPointer!!.invoke(vPosLocation.toUInt(), 2, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexPosOffset())
-	glEnableVertexAttribArray!!.invoke(vColLocation.toUInt())
-	glVertexAttribPointer!!.invoke(vColLocation.toUInt(), 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), sizeOf<Vertex>().toInt(), vertexColOffset())
 
 	while (!glfwWindowShouldClose(window)) {
-		val width: IntVar = nativeHeap.alloc()
-		val height: IntVar = nativeHeap.alloc()
-		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
-		val ratio: Float = (width.value / height.value).toFloat()
-
-		glViewport!!.invoke(0, 0, width.value, height.value)
 		glClear!!.invoke(GL_COLOR_BUFFER_BIT.toUInt())
 
-		nativeHeap.free(width)
-		nativeHeap.free(height)
-
-		memScoped {
-			val m: CArrayPointer<FloatVar> = allocArray(4L)
-			val p: mat4x4 = allocArray(4L)
-			val mvp: mat4x4 = allocArray(4L)
-			mat4x4_identity(m)
-			mat4x4_rotate_Z(m, m, glfwGetTime().toFloat())
-			mat4x4_ortho(p, -ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f)
-			mat4x4_mul(mvp, p, m)
-
-			glUseProgram!!.invoke(program)
-			glUniformMatrix4fv!!.invoke(mvpLocation, 1, GL_FALSE.toUByte(), mvp)
-		}
+		glUseProgram!!.invoke(program)
 		glBindVertexArray!!.invoke(vertexArray.value)
+
 		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
 
 		glfwSwapBuffers(window)
@@ -398,6 +374,7 @@ fun glfwMain(): Nothing {
 	}
 
 	nativeHeap.free(vertexArray)
+	nativeHeap.free(vertexBuffer)
 
 	glfwDestroyWindow(window)
 	glfwTerminate()
