@@ -50,6 +50,7 @@ import gl.glGenBuffers
 import gl.glGenVertexArrays
 import gl.glGetAttribLocation
 import gl.glGetError
+import gl.glGetProgramInfoLog
 import gl.glGetProgramiv
 import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
@@ -65,7 +66,7 @@ import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetFramebufferSize
 import glfw.glfwGetProcAddress
 import glfw.glfwGetTime
-import glfw.glfwGetVersion
+import glfw.glfwSetFramebufferSizeCallback
 
 import io.github.epicvon2468.core.interop.exitProcess
 import io.github.epicvon2468.core.interop.gl.glGetString
@@ -193,22 +194,21 @@ val vertices: CArrayPointer<Vertex> = nativeHeap.vertexArrayOf(
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
 fun checkCompile(
-	func: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
+	checker: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
+	infoLog: CPointer<CFunction<(UInt, Int, CPointer<IntVar>?, CPointer<ByteVar>?) -> Unit>>,
 	obj: GLuint,
 	name: String
 ) = memScoped {
 	val cStatus: IntVar = alloc()
-	func.invoke(obj, GL_COMPILE_STATUS.toUInt(), cStatus.ptr)
+	checker.invoke(obj, GL_COMPILE_STATUS.toUInt(), cStatus.ptr)
 	val success = cStatus.value.glBoolean()
 	println("Obj '$name' ($obj) compile status: ${if (success) "success" else "failure"}.")
 	if (!success) {
-		val totalLength: IntVar = alloc()
-		glGetShaderiv!!.invoke(obj, GL_INFO_LOG_LENGTH.toUInt(), totalLength.ptr)
 		println("Getting error log!")
-		val errorLog: CArrayPointer<ByteVar> = allocArray(totalLength.value)
-		glGetShaderInfoLog!!.invoke(obj, totalLength.value, totalLength.ptr, errorLog)
+		val errorLog: CArrayPointer<ByteVar> = allocArray(512)
+		infoLog.invoke(obj, 512, null, errorLog)
 		println("Error log: '${errorLog.toKString()}'")
-		exitProcess(EXIT_FAILURE)
+		//exitProcess(EXIT_FAILURE)
 	}
 }
 
@@ -253,6 +253,7 @@ fun Int.glBoolean(): Boolean = when (this) {
 // https://dri.freedesktop.org/wiki/libGL/
 // https://www.opengl.org/sdk/
 // https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
+// https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/2.2.hello_triangle_indexed/hello_triangle_indexed.cpp
 fun glfwMain(): Nothing {
 	// To test this, window hint GLFW_CONTEXT_VERSION_MAJOR and GLFW_CONTEXT_VERSION_MINOR to something absurd like 99.
 	glfwSetErrorCallback { errorCode: Int, description: String? ->
@@ -277,6 +278,9 @@ fun glfwMain(): Nothing {
 
 	glfwMakeContextCurrent(window)
 	gladLoadGL(staticCFunction(::ktGlfwGetProcAddress))
+	glfwSetFramebufferSizeCallback(window.window, staticCFunction { _, width: Int, height: Int ->
+		glViewport!!.invoke(0, 0, width, height)
+	})
 	// V-Sync.
 	glfwSwapInterval(1)
 
@@ -312,7 +316,7 @@ fun glfwMain(): Nothing {
 	checkGLError("glCompileShader vertex")
 
 	// Obj 'Vertex Shader' (1) compile status: success.
-	checkCompile(glGetShaderiv!!, vertexShader, "Vertex Shader")
+	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, vertexShader, "Vertex Shader")
 	checkGLError("checkCompile vertex")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
@@ -323,7 +327,7 @@ fun glfwMain(): Nothing {
 	checkGLError("glCompileShader fragment")
 
 	// Obj 'Fragment Shader' (2) compile status: success.
-	checkCompile(glGetShaderiv!!, fragmentShader, "Fragment Shader")
+	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, fragmentShader, "Fragment Shader")
 	checkGLError("checkCompile fragment")
 
 	// This is the failure point.
@@ -338,7 +342,7 @@ fun glfwMain(): Nothing {
 
 	// Error only logs at this point
 	// Obj 'Shader Program' (3) compile status: failure.
-	checkCompile(glGetProgramiv!!, program, "Shader Program")
+	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, program, "Shader Program")
 	checkGLError("checkCompile program")
 
 	val (mvpLocation: GLint, vPosLocation: GLint, vColLocation: GLint) = memScoped {
