@@ -197,10 +197,11 @@ fun checkCompile(
 	obj: GLuint,
 	name: String
 ) = memScoped {
-	val status: IntVar = alloc()
-	func.invoke(obj, GL_COMPILE_STATUS.toUInt(), status.ptr)
-	println("Obj '$name' ($obj) compile status: ${if (status.value == GL_TRUE) "success" else "failure"}.")
-	if (status.value == GL_FALSE) {
+	val cStatus: IntVar = alloc()
+	func.invoke(obj, GL_COMPILE_STATUS.toUInt(), cStatus.ptr)
+	val success = cStatus.value.glBoolean()
+	println("Obj '$name' ($obj) compile status: ${if (success) "success" else "failure"}.")
+	if (!success) {
 		val totalLength: IntVar = alloc()
 		glGetShaderiv!!.invoke(obj, GL_INFO_LOG_LENGTH.toUInt(), totalLength.ptr)
 		println("Getting error log!")
@@ -222,7 +223,7 @@ fun checkGLError(place: String) {
 		GL_STACK_OVERFLOW -> "STACK OVERFLOW"
 		GL_OUT_OF_MEMORY -> "OUT OF MEMORY"
 		GL_INVALID_FRAMEBUFFER_OPERATION -> "INVALID FRAMEBUFFER OPERATION"
-		else -> throw IllegalStateException("Couldn't match GL error code, got unknown value: '$error'!")
+		else -> error("Couldn't match GL error code, got unknown value: '$error'!")
 	}.let { println("GL errored at '$place'! Error: $it") }
 }
 
@@ -239,6 +240,12 @@ fun main() {
 //	println("Version: ${version.contentToString()}")
 
 	glfwMain()
+}
+
+fun Int.glBoolean(): Boolean = when (this) {
+	GL_TRUE -> true
+	GL_FALSE -> false
+	else -> error("Couldn't parse GL boolean '$this', expected either '$GL_TRUE' (true) or '$GL_FALSE' (false)!")
 }
 
 // Just some tests for GLFW interop.
