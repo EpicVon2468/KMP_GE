@@ -271,13 +271,17 @@ fun glfwMain(): Nothing {
 	// Wouldn't normally be able to access GLFWWindowC, but I'll use this cheat for now since I haven't implemented all the functions yet.
 	val window: GLFWWindowC? = glfwCreateWindow(640, 480, "KMP_GE") as GLFWWindowC?
 	if (window == null) {
-		glfwTerminate()
 		println("ERROR - GLFWWindow failed to create!")
+		glfwTerminate()
 		exitProcess(EXIT_FAILURE)
 	}
 
 	glfwMakeContextCurrent(window)
-	gladLoadGL(staticCFunction(::ktGlfwGetProcAddress))
+	if (gladLoadGL(staticCFunction(::ktGlfwGetProcAddress)) == 0) {
+		println("ERROR - Glad failed to load GL!")
+		glfwTerminate()
+		exitProcess(EXIT_FAILURE)
+	}
 	glfwSetFramebufferSizeCallback(window.window, staticCFunction { _, width: Int, height: Int ->
 		glViewport!!.invoke(0, 0, width, height)
 	})
