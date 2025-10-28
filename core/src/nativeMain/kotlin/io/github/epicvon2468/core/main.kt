@@ -10,7 +10,6 @@ import gl.GL_DEBUG_OUTPUT_SYNCHRONOUS
 import gl.GL_FALSE
 import gl.GL_FLOAT
 import gl.GL_FRAGMENT_SHADER
-import gl.GL_INFO_LOG_LENGTH
 import gl.GL_INVALID_ENUM
 import gl.GL_INVALID_FRAMEBUFFER_OPERATION
 import gl.GL_INVALID_OPERATION
@@ -24,14 +23,7 @@ import gl.GL_TRIANGLES
 import gl.GL_TRUE
 import gl.GL_VERTEX_SHADER
 import gl.GLenum
-import gl.GLenumVar
-import gl.GLfloat
-import gl.GLfloatVar
-import gl.GLint
-import gl.GLintVar
 import gl.GLsizei
-import gl.GLubyte
-import gl.GLubyteVar
 import gl.GLuint
 import gl.GLuintVar
 import gl.glAttachShader
@@ -48,16 +40,13 @@ import gl.glEnable
 import gl.glEnableVertexAttribArray
 import gl.glGenBuffers
 import gl.glGenVertexArrays
-import gl.glGetAttribLocation
 import gl.glGetError
 import gl.glGetProgramInfoLog
 import gl.glGetProgramiv
 import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
-import gl.glGetUniformLocation
 import gl.glLinkProgram
 import gl.glShaderSourceK
-import gl.glUniformMatrix4fv
 import gl.glUseProgram
 import gl.glVertexAttribPointer
 import gl.glViewport
@@ -65,7 +54,7 @@ import gl.gladLoadGL
 import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetFramebufferSize
 import glfw.glfwGetProcAddress
-import glfw.glfwGetTime
+import glfw.glfwGetVersion
 import glfw.glfwSetFramebufferSizeCallback
 
 import io.github.epicvon2468.core.interop.exitProcess
@@ -100,7 +89,6 @@ import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
-import kotlinx.cinterop.cstr
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
@@ -115,12 +103,6 @@ import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 
 import linearmaths.Vertex
-import linearmaths.cSizeOf
-import linearmaths.mat4x4
-import linearmaths.mat4x4_identity
-import linearmaths.mat4x4_mul
-import linearmaths.mat4x4_ortho
-import linearmaths.mat4x4_rotate_Z
 import linearmaths.vec2
 import linearmaths.vec3
 
@@ -136,9 +118,9 @@ const val VERTEX_SHADER: String =
 
 const val FRAGMENT_SHADER: String =
 	"#version 410 core\n" +
-	"out vec4 frag_color;\n" +
+	"out vec4 frag_colour;\n" +
 	"void main() {\n" +
-	"    frag_color = vec4(0.5, 0.0, 0.5, 1.0);\n" +
+	"    frag_colour = vec4(0.5, 0.0, 0.5, 1.0);\n" +
 	"}\n"
 
 fun vec2.set(first: Float, second: Float) {
@@ -223,14 +205,14 @@ fun checkGLError(place: String) {
 // Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
-//	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
-//	nativeHeap.free(vec2)
-//
-//	println("GLFW version string: ${glfwGetVersionString()}")
-//
-//	val version = IntArray(3)
-//	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
-//	println("Version: ${version.contentToString()}")
+	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
+	nativeHeap.free(vec2)
+
+	println("GLFW version string: ${glfwGetVersionString()}")
+
+	val version = IntArray(3)
+	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
+	println("Version: ${version.contentToString()}")
 
 	glfwMain()
 }
