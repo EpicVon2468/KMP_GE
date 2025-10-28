@@ -85,7 +85,6 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
 import kotlinx.cinterop.IntVar
-import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
@@ -96,15 +95,12 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import kotlinx.cinterop.set
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 
-import linearmaths.Vertex
 import linearmaths.vec2
-import linearmaths.vec3
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
@@ -122,49 +118,6 @@ const val FRAGMENT_SHADER: String =
 	"void main() {\n" +
 	"    frag_colour = vec4(0.5, 0.0, 0.5, 1.0);\n" +
 	"}\n"
-
-fun vec2.set(first: Float, second: Float) {
-	this[0] = first
-	this[1] = second
-}
-
-fun vec2.set(value: Pair<Float, Float>) = this.set(value.first, value.second)
-
-fun vec3.set(first: Float, second: Float, third: Float) {
-	this[0] = first
-	this[1] = second
-	this[2] = third
-}
-
-fun vec3.set(value: Triple<Float, Float, Float>) = this.set(value.first, value.second, value.third)
-
-fun NativePlacement.vertexArrayOf(
-	size: Long,
-	init: Vertex.(index: Long) -> Unit
-): CArrayPointer<Vertex> = this.allocArray<Vertex>(size).also { array: CArrayPointer<Vertex> ->
-	for (index in 0..<size) array[index].init(index)
-}
-
-fun NativePlacement.vertexArrayOf(
-	size: Long,
-	vararg entries: Vertex.(index: Long) -> Unit
-): CArrayPointer<Vertex> = this.vertexArrayOf(size) { entries[it.toInt()](this, it) }
-
-val vertices: CArrayPointer<Vertex> = nativeHeap.vertexArrayOf(
-	3L,
-	{
-		this.pos.set(-0.6f, -0.4f)
-		this.col.set(1.0f, 0.0f, 0.0f)
-	},
-	{
-		this.pos.set(0.6f, -0.4f)
-		this.col.set(0.0f, 1.0f, 0.0f)
-	},
-	{
-		this.pos.set(0.0f,  0.6f)
-		this.col.set(0.0f, 0.0f, 1.0f)
-	}
-)
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
@@ -282,7 +235,7 @@ fun glfwMain(): Nothing {
 		null
 	)
 
-	val points: CArrayPointer<FloatVar> = nativeHeap.allocArrayOf(
+	val vertices: CArrayPointer<FloatVar> = nativeHeap.allocArrayOf(
 		0.0f, 0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f
@@ -293,7 +246,7 @@ fun glfwMain(): Nothing {
 	checkGLError("glGenBuffers")
 	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 	checkGLError("glBindBuffer")
-	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), points, GL_STATIC_DRAW.toUInt())
+	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), vertices, GL_STATIC_DRAW.toUInt())
 	checkGLError("glBufferData")
 
 	val vertexArray: GLuintVar = nativeHeap.alloc()
@@ -365,8 +318,6 @@ fun glfwMain(): Nothing {
 
 	glfwDestroyWindow(window)
 	glfwTerminate()
-
-	nativeHeap.free(vertices)
 
 	exitProcess(EXIT_SUCCESS)
 }
