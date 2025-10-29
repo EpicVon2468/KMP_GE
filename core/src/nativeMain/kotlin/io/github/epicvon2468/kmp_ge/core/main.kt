@@ -48,7 +48,6 @@ import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
 import gl.glGetUniformLocation
 import gl.glLinkProgram
-import gl.glShaderSourceK
 import gl.glUniform1f
 import gl.glUseProgram
 import gl.glVertexAttribPointer
@@ -112,6 +111,8 @@ import platform.posix.EXIT_SUCCESS
 import platform.posix._IONBF
 import platform.posix.setvbuf
 import platform.posix.stdout
+
+import kmp_ge.glShaderSource_K
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
@@ -251,7 +252,7 @@ fun glfwMain(): Nothing {
 	glVertexAttribPointer!!.invoke(0U, 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), 0, null)
 
 	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
-	glShaderSourceK(vertexShader, 1, VERTEX_SHADER, null)
+	glShaderSource_K(vertexShader, 1, VERTEX_SHADER, null)
 	glCompileShader!!.invoke(vertexShader)
 	checkGLError("glCompileShader vertex")
 
@@ -260,7 +261,7 @@ fun glfwMain(): Nothing {
 	checkGLError("checkCompile vertex")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
-	glShaderSourceK(fragmentShader, 1, FRAGMENT_SHADER, null)
+	glShaderSource_K(fragmentShader, 1, FRAGMENT_SHADER, null)
 	glCompileShader!!.invoke(fragmentShader)
 	checkGLError("glCompileShader fragment")
 
