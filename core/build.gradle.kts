@@ -1,8 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 
-// TODO: Fix package name
-
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
 	alias(libs.plugins.kotlinx.serialisation)
@@ -12,9 +10,9 @@ plugins {
 tasks.register("bakeInShaders") {
 	doFirst {
 		val projectDir = File(System.getProperty("user.dir"))
-		val out = projectDir.resolve("core/src/nativeMain/kotlin/io/github/epicvon2468/core/Shaders.kt")
-		fun writeShaderConstants(it: File, sb: StringBuilder) {
-			for (line in it.readText().split('\n')) {
+		val out = projectDir.resolve("core/src/nativeMain/kotlin/io/github/epicvon2468/kmp_ge/core/Shaders.kt")
+		fun writeShaderConstants(shader: File, sb: StringBuilder) {
+			for (line in shader.readText().split('\n')) {
 				if (line.isEmpty() || line == "\n") continue
 				val append = if (line.endsWith('\n')) line.substring(0..<line.lastIndex) else line
 				sb.append("\t\"$append\\n\" +\n")
@@ -23,7 +21,7 @@ tasks.register("bakeInShaders") {
 		projectDir.resolve("shader.vert").let {
 			out.delete()
 			out.createNewFile()
-			val sb = StringBuilder("package io.github.epicvon2468.core\n\nconst val VERTEX_SHADER: String =\n")
+			val sb = StringBuilder("package io.github.epicvon2468.kmp_ge.core\n\nconst val VERTEX_SHADER: String =\n")
 			writeShaderConstants(it, sb)
 			out.writeText(sb.substring(0..<sb.lastIndex - 2) + "\n\n")
 		}
@@ -89,7 +87,7 @@ tasks.register("generateCInteropDefs") {
 fun configureNativeTargets(it: KotlinNativeTargetWithHostTests) = with(it) {
 	binaries {
 		executable {
-			entryPoint = "io.github.epicvon2468.core.main"
+			entryPoint = "io.github.epicvon2468.kmp_ge.core.main"
 		}
 	}
 	compilations.getByName("main") {
@@ -134,7 +132,7 @@ kotlin {
 buildkonfig {
 	// BuildKonfig configuration here.
 	// https://github.com/yshrsmz/BuildKonfig#gradle-configuration
-	packageName = "io.github.epicvon2468.core"
+	packageName = "io.github.epicvon2468.kmp_ge.core"
 	defaultConfigs {
 	}
 }
