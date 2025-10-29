@@ -19,3 +19,4 @@ cmake-build-debug/
 # These need hardcoding within them to work, so they're generated with a gradle task instead of manual edits.
 **/gl.def
 **/linearmaths.def
+**/kmp_ge.def

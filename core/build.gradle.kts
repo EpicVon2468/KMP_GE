@@ -37,11 +37,12 @@ tasks.register("bakeInShaders") {
 
 tasks.register("generateCInteropDefs") {
 	description =
-		"Creates the .def files for `gl` and `linearmaths.def`, since they both need to use the files in `./core/c/include`, and that has to be hardcoded with the full directory."
+		"Creates the .def files for `gl`, `kmp_ge, and `linearmaths`, since they need to use the files in `./core/c/include`, and that has to be hardcoded with the full directory."
 	doFirst {
-		println("Generating gl.def and linearmaths.def")
+		println("Generating gl.def, kmp_ge.def, and linearmaths.def")
 
-		val core = System.getProperty("user.dir") + "/core"
+		val base = System.getProperty("user.dir")
+		val core = "$base/core"
 		val cInteropDir = File("$core/src/nativeInterop/cinterop")
 		cInteropDir.resolve("gl.def").let {
 			println("Generating gl.def")
@@ -76,6 +77,20 @@ tasks.register("generateCInteropDefs") {
 			)
 			println("Generated linearmaths.def")
 		}
+		cInteropDir.resolve("kmp_ge.def").let {
+			println("Generating kmp_ge.def")
+			if (!it.exists()) it.createNewFile()
+			it.writeText(
+				"""
+					headers = kmp_ge.h
+					staticLibraries = libkmp_ge.a
+					libraryPaths = $base/cmake-build-debug
+
+					compilerOpts = -I$core/c/include/kmp_ge
+				""".trimIndent()
+			)
+			println("Generated kmp_ge.def")
+		}
 	}
 	doLast {
 		println("Generated gl.def and linearmaths.def")
@@ -95,6 +110,7 @@ fun configureNativeTargets(it: KotlinNativeTargetWithHostTests) = with(it) {
 			val glfw by creating
 			val gl by creating
 			val linearmaths by creating
+			val kmp_ge by creating
 		}
 	}
 }
