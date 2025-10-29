@@ -46,7 +46,6 @@ import gl.glGetProgramInfoLog
 import gl.glGetProgramiv
 import gl.glGetShaderInfoLog
 import gl.glGetShaderiv
-import gl.glGetUniformLocation
 import gl.glLinkProgram
 import gl.glUniform1f
 import gl.glUseProgram
@@ -91,7 +90,6 @@ import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
-import kotlinx.cinterop.cstr
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
@@ -112,6 +110,7 @@ import platform.posix._IONBF
 import platform.posix.setvbuf
 import platform.posix.stdout
 
+import kmp_ge.glGetUniformLocation_K
 import kmp_ge.glShaderSource_K
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
@@ -281,8 +280,7 @@ fun glfwMain(): Nothing {
 	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, program, "Shader Program")
 	checkGLError("checkCompile program")
 
-	val timeLocation: GLint = memScoped { glGetUniformLocation!!.invoke(program, "time".cstr.ptr) }
-	if (timeLocation == -1) error("Couldn't get uniform time location!")
+	val uTimeLocation: GLint = glGetUniformLocation_K(program, "time")
 
 	// Do a first glViewport to fix alignment.
 	memScoped {
@@ -296,7 +294,7 @@ fun glfwMain(): Nothing {
 		glClear!!.invoke(GL_COLOR_BUFFER_BIT.toUInt())
 
 		glUseProgram!!.invoke(program)
-		glUniform1f!!.invoke(timeLocation, glfwGetTime().toFloat())
+		glUniform1f!!.invoke(uTimeLocation, glfwGetTime().toFloat())
 		glBindVertexArray!!.invoke(vertexArray.value)
 
 		glDrawArrays!!.invoke(GL_TRIANGLES.toUInt(), 0, 3)
