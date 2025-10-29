@@ -204,7 +204,7 @@ fun glfwMain(): Nothing {
 	}
 
 	glfwMakeContextCurrent(window)
-	if (loadGL()) {
+	if (!loadGL()) {
 		println("ERROR - Glad failed to load GL!")
 		glfwTerminate()
 		exitProcess(EXIT_FAILURE)

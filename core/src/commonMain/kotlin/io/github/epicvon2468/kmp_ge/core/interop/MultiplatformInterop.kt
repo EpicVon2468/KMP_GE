@@ -12,13 +12,13 @@ expect class Ptr<T : Ptd>
  *
  * @return This method never returns normally.
  */
-expect fun exitProcess(status: Int = 0): Nothing
+expect fun exitProcess(status: Int = EXIT_SUCCESS): Nothing
 
 /**
  * Constant value for a successful process exit.
  *
  * This is almost always 0, however, in C, `EXIT_SUCCESS` and `EXIT_FAILURE`
- * are different based on implementation, thus requiring this to be `expect` instead of a multiplatform constant.
+ * may be different based on implementation, thus requiring this to be `expect` instead of a multiplatform constant.
  */
 expect val EXIT_SUCCESS: Int
 
