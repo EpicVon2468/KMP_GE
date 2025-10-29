@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package io.github.epicvon2468.kmp_ge.core
 
-import gl.GLADapiproc
 import gl.GL_ARRAY_BUFFER
 import gl.GL_COLOR_BUFFER_BIT
 import gl.GL_COMPILE_STATUS
@@ -51,15 +50,16 @@ import gl.glUniform1f
 import gl.glUseProgram
 import gl.glVertexAttribPointer
 import gl.glViewport
-import gl.gladLoadGL
+
 import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetFramebufferSize
-import glfw.glfwGetProcAddress
 import glfw.glfwGetTime
 import glfw.glfwGetVersion
 import glfw.glfwSetFramebufferSizeCallback
 
 import io.github.epicvon2468.kmp_ge.core.interop.exitProcess
+import io.github.epicvon2468.kmp_ge.core.interop.EXIT_SUCCESS
+import io.github.epicvon2468.kmp_ge.core.interop.EXIT_FAILURE
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.context.glfwSwapInterval
@@ -104,16 +104,13 @@ import kotlinx.cinterop.value
 
 import linearmaths.vec2
 
-import platform.posix.EXIT_FAILURE
-import platform.posix.EXIT_SUCCESS
 import platform.posix._IONBF
 import platform.posix.setvbuf
 import platform.posix.stdout
 
 import kmp_ge.glGetUniformLocation_K
 import kmp_ge.glShaderSource_K
-
-fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
+import kmp_ge.loadGL
 
 fun checkCompile(
 	checker: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
@@ -207,7 +204,7 @@ fun glfwMain(): Nothing {
 	}
 
 	glfwMakeContextCurrent(window)
-	if (gladLoadGL(staticCFunction(::ktGlfwGetProcAddress)) == 0) {
+	if (loadGL()) {
 		println("ERROR - Glad failed to load GL!")
 		glfwTerminate()
 		exitProcess(EXIT_FAILURE)

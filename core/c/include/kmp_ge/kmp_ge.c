@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "../glad/glad/gl.h"
+#include "../glfw3.h"
 
 void glShaderSource_K(const GLuint shader, const GLsizei count, const GLchar* string, const GLint* length) {
 	glShaderSource(shader, count, &string, length);
@@ -15,4 +16,8 @@ GLint glGetUniformLocation_K(const GLuint program, const GLchar* name) {
 		fflush(stderr);
 	}
 	return location;
+}
+
+bool loadGL() {
+	return gladLoadGL(glfwGetProcAddress);
 }

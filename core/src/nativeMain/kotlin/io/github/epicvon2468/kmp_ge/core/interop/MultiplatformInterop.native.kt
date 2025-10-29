@@ -11,3 +11,7 @@ actual typealias Ptr<T> = CPointer<T>
 
 @Suppress("NOTHING_TO_INLINE")
 actual inline fun exitProcess(status: Int): Nothing = kotlin.system.exitProcess(status)
+
+actual const val EXIT_SUCCESS: Int = platform.posix.EXIT_SUCCESS
+
+actual const val EXIT_FAILURE: Int = platform.posix.EXIT_FAILURE
