@@ -109,6 +109,9 @@ import linearmaths.vec2
 
 import platform.posix.EXIT_FAILURE
 import platform.posix.EXIT_SUCCESS
+import platform.posix._IONBF
+import platform.posix.setvbuf
+import platform.posix.stdout
 
 fun ktGlfwGetProcAddress(ptr: CPointer<ByteVar>?): GLADapiproc? = glfwGetProcAddress(ptr?.toKString())
 
@@ -149,6 +152,9 @@ fun checkGLError(place: String) {
 // Testing with native stuff
 @OptIn(ExperimentalForeignApi::class)
 fun main() {
+	// Auto flush (no buffer)
+	setvbuf(stdout, null, _IONBF, 0U)
+
 	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
 	require(vec2[0] == -0.6f)
 	require(vec2[1] == -0.4f)
