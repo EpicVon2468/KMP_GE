@@ -1,8 +1,31 @@
 package io.github.epicvon2468.kmp_ge.core.interop
 
-expect abstract class Ptd
+expect open class NPtd
+
+expect abstract class Ptd : NPtd
+
+expect abstract class Var : Ptd
 
 expect class Ptr<T : Ptd>
+
+expect interface Mem
+
+expect interface FMem : Mem
+
+expect fun Mem.alloc(size: Long, align: Int): NPtd
+
+fun Mem.alloc(size: Int, align: Int): NPtd = this.alloc(size.toLong(), align)
+
+expect inline fun <reified T : Var> Mem.alloc(): T
+
+expect fun FMem.free(ptr: Ptr<*>)
+
+expect fun FMem.free(ptr: NPtd)
+
+/**
+ * Heap memory.
+ */
+expect object HMem : Mem
 
 /**
  * Terminates the currently running process.

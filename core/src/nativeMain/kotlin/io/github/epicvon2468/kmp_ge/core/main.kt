@@ -61,6 +61,9 @@ import glfw.glfwSetFramebufferSizeCallback
 import io.github.epicvon2468.kmp_ge.core.interop.exitProcess
 import io.github.epicvon2468.kmp_ge.core.interop.EXIT_SUCCESS
 import io.github.epicvon2468.kmp_ge.core.interop.EXIT_FAILURE
+import io.github.epicvon2468.kmp_ge.core.interop.HMem
+import io.github.epicvon2468.kmp_ge.core.interop.free
+import io.github.epicvon2468.kmp_ge.core.interop.alloc
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.context.glfwSwapInterval
@@ -90,11 +93,8 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
 import kotlinx.cinterop.IntVar
-import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
-import kotlinx.cinterop.free
-import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
@@ -156,10 +156,10 @@ fun main() {
 	// Auto flush (no buffer)
 	setvbuf(stdout, null, _IONBF, 0U)
 
-	val vec2: vec2 = nativeHeap.allocArrayOf(-0.6f, -0.4f)
+	val vec2: vec2 = HMem.allocArrayOf(-0.6f, -0.4f)
 	require(vec2[0] == -0.6f)
 	require(vec2[1] == -0.4f)
-	nativeHeap.free(vec2)
+	HMem.free(vec2)
 
 	println("GLFW version string: ${glfwGetVersionString()}")
 
@@ -178,9 +178,6 @@ fun Int.glBoolean(): Boolean = when (this) {
 	else -> error("Couldn't parse GL boolean '$this', expected either '$GL_TRUE' (true) or '$GL_FALSE' (false)!")
 }
 
-// TODO: Before abstracting this into the library, the cause of the error needs to be found first. Whilst it does show
-//		the triangle on-screen, I can't just leave everything as-is; If this is a problem with my allocation, I need to
-//		find out now, rather than when I've written a whole abstraction wrong.
 // Just some tests for GLFW interop.
 // https://www.glfw.org/docs/latest/quick_guide.html
 // https://dri.freedesktop.org/wiki/libGL/
@@ -235,18 +232,18 @@ fun glfwMain(): Nothing {
 		null
 	)
 
-	val vertices: CArrayPointer<FloatVar> = nativeHeap.allocArrayOf(
+	val vertices: CArrayPointer<FloatVar> = HMem.allocArrayOf(
 		0.0f, 0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f
 	)
 
-	val vertexBuffer: GLuintVar = nativeHeap.alloc()
+	val vertexBuffer: GLuintVar = HMem.alloc()
 	glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), vertices, GL_STATIC_DRAW.toUInt())
 
-	val vertexArray: GLuintVar = nativeHeap.alloc()
+	val vertexArray: GLuintVar = HMem.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
 	glBindVertexArray!!.invoke(vertexArray.value)
 	glEnableVertexAttribArray!!.invoke(0U)
@@ -301,8 +298,8 @@ fun glfwMain(): Nothing {
 		glfwPollEvents()
 	}
 
-	nativeHeap.free(vertexArray)
-	nativeHeap.free(vertexBuffer)
+	HMem.free(vertexArray)
+	HMem.free(vertexBuffer)
 
 	glfwDestroyWindow(window)
 	glfwTerminate()
