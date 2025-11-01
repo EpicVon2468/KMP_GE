@@ -4,12 +4,34 @@ expect open class NPtd
 
 expect abstract class Ptd : NPtd
 
+expect val <T : Ptd> T.ptr: Ptr<T>
+
+expect inline val <reified T : Ptd> Ptr<T>.pointed: T
+
 expect abstract class Var : Ptd
+
+// START POINTER VARS
+
+typealias PtrVar<T> = PtrVarOf<Ptr<T>>
+
+expect class PtrVarOf<T : Ptr<*>> : Var
+
+expect inline var <P : Ptr<*>> PtrVarOf<P>.value: P?
+
+expect inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T?
+
+// END POINTER VARS
 
 expect class Ptr<T : Ptd>
 
+/**
+ * Non-freeable (immutable) memory.
+ */
 expect interface Mem
 
+/**
+ * Freeable (mutable) memory.
+ */
 expect interface FMem : Mem
 
 expect fun Mem.alloc(size: Long, align: Int): NPtd
@@ -18,6 +40,8 @@ fun Mem.alloc(size: Int, align: Int): NPtd = this.alloc(size.toLong(), align)
 
 expect inline fun <reified T : Var> Mem.alloc(): T
 
+expect fun <T : Ptd> Mem.allocPtrTo(): PtrVarOf<Ptr<T>>
+
 expect fun FMem.free(ptr: Ptr<*>)
 
 expect fun FMem.free(ptr: NPtd)
@@ -25,7 +49,7 @@ expect fun FMem.free(ptr: NPtd)
 /**
  * Heap memory.
  */
-expect object HMem : Mem
+expect object HMem : FMem
 
 /**
  * Terminates the currently running process.
