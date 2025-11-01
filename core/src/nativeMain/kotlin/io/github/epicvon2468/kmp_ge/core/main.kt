@@ -53,10 +53,8 @@ import gl.glVertexAttribPointer
 import gl.glViewport
 
 import glfw.GLFW_OPENGL_CORE_PROFILE
-import glfw.glfwGetFramebufferSize
 import glfw.glfwGetTime
 import glfw.glfwGetVersion
-import glfw.glfwSetFramebufferSizeCallback
 
 import io.github.epicvon2468.kmp_ge.core.interop.exitProcess
 import io.github.epicvon2468.kmp_ge.core.interop.EXIT_SUCCESS
@@ -74,6 +72,8 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwDestroyWindow
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwWindowShouldClose
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwPollEvents
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwSwapBuffers
+import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwSetFramebufferSizeCallback
+import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwGetFramebufferSize
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.init.glfwGetVersionString
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.init.glfwInit
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.init.glfwSetErrorCallback
@@ -213,9 +213,9 @@ fun glfwMain(): Nothing {
 		glfwTerminate()
 		exitProcess(EXIT_FAILURE)
 	}
-	glfwSetFramebufferSizeCallback(window.window, staticCFunction { _, width: Int, height: Int ->
+	glfwSetFramebufferSizeCallback(window) { _, width: Int, height: Int ->
 		glViewport!!.invoke(0, 0, width, height)
-	})
+	}
 	// V-Sync.
 	glfwSwapInterval(1)
 
@@ -281,7 +281,7 @@ fun glfwMain(): Nothing {
 	memScoped {
 		val width: IntVar = alloc()
 		val height: IntVar = alloc()
-		glfwGetFramebufferSize(window.window, width.ptr, height.ptr)
+		glfwGetFramebufferSize(window, width.ptr, height.ptr)
 		glViewport!!.invoke(0, 0, width.value, height.value)
 	}
 

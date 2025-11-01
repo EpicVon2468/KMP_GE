@@ -273,6 +273,11 @@ actual fun glfwGetWindowUserPointer(window: GLFWWindow?): Ptr<*>? = TODO()
 //
 
 @GLFW
+actual fun glfwSetFramebufferSizeCallback(window: GLFWWindow?, callback: GLFWFramebufferSizeFun?): Unit = TODO()
+
+//
+
+@GLFW
 actual fun glfwPollEvents(): Unit = TODO()
 
 @GLFW

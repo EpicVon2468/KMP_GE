@@ -22,6 +22,16 @@ expect inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T?
 
 // END POINTER VARS
 
+// START PRIMITIVE INT VARS
+
+typealias IntVar = IntVarOf<Int>
+
+expect class IntVarOf<T : Int> : Var
+
+expect var <T : Int> IntVarOf<T>.value: T
+
+// END PRIMITIVE INT VARS
+
 expect class Ptr<T : Ptd>
 
 /**

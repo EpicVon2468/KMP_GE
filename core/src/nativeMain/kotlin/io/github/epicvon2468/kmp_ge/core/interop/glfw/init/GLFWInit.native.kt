@@ -75,9 +75,11 @@ actual inline fun glfwInitHint(hint: Int, value: Int) = glfw.glfwInitHint(hint, 
 actual inline fun glfwGetVersionString(): String = glfw.glfwGetVersionString()?.toKString()
 	?: error("Native `glfwGetVersionString()` call returned null! This is impossible as it should be a compile-time constant!")
 
-var _callback: GLFWErrorFun? = null
+@PublishedApi
+internal var _callback: GLFWErrorFun? = null
 
-fun __callback(error: Int, description: CPointer<ByteVar>?) {
+@PublishedApi
+internal fun __callback(error: Int, description: CPointer<ByteVar>?) {
 	_callback?.invoke(error, description?.toKString())
 }
 

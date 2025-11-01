@@ -42,6 +42,18 @@ actual inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T? 
 
 // END POINTER VARS
 
+// START PRIMITIVE INT VARS
+
+actual typealias IntVarOf<T> = kotlinx.cinterop.IntVarOf<T>
+
+actual var <T : Int> IntVarOf<T>.value: T
+	get() = this.value
+	set(value) {
+		this.value = value
+	}
+
+// END PRIMITIVE INT VARS
+
 actual typealias Mem = NativePlacement
 
 actual typealias FMem = NativeFreeablePlacement

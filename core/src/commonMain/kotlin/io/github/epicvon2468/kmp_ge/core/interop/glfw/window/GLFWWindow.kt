@@ -1,5 +1,6 @@
 package io.github.epicvon2468.kmp_ge.core.interop.glfw.window
 
+import io.github.epicvon2468.kmp_ge.core.interop.IntVar
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.GLFW
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.GLFWMonitor
@@ -177,6 +178,9 @@ interface GLFWWindow
 
 @GLFW
 interface GLFWImage
+
+@GLFW
+typealias GLFWFramebufferSizeFun = (window: GLFWWindow?, width: Int, height: Int) -> Unit
 
 @GLFW
 expect fun glfwDefaultWindowHints()
@@ -381,7 +385,13 @@ expect fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demon: Int)
 @GLFW
 expect fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int)
 
-// void glfwGetFramebufferSize(GLFWWindow *window, int *left, int *top, int *right, int *bottom)
+// void glfwGetFramebufferSize(GLFWWindow *window, int *left, int *top)
+
+// void glfwGetWindowFrameSize(GLFWWindow *window, int *left, int *top, int *right, int *bottom)
+
+// TODO: Widen access from `Ptr<IntVar>` to `CValuesRef<IntVar>`
+@GLFW
+expect fun glfwGetFramebufferSize(window: GLFWWindow?, left: Ptr<IntVar>, top: Ptr<IntVar>)
 
 // void glfwGetWindowContentScale(GLFWWindow *window, float *xScale, float *yScale)
 
@@ -453,6 +463,9 @@ expect fun glfwGetWindowUserPointer(window: GLFWWindow?): Ptr<*>?
 // GLFWWindowMaximiseFun glfwSetWindowMaximiseCallback(GLFWWindow *window, GLFWWindowMaximiseFun callback)
 
 // GLFWFramebufferSizeFun glfwSetFramebufferSizeCallback(GLFWWindow *window, GLFWFramebufferSizeFun callback)
+
+@GLFW
+expect fun glfwSetFramebufferSizeCallback(window: GLFWWindow?, callback: GLFWFramebufferSizeFun?)
 
 // GLFWWindowContentScaleFun glfwSetWindowContentScaleCallback(GLFWWindow *window, GLFWWindowContentScaleFun callback)
 

@@ -1,7 +1,8 @@
 @file:OptIn(ExperimentalForeignApi::class)
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "ObjectPropertyName", "FunctionName")
 package io.github.epicvon2468.kmp_ge.core.interop.glfw.window
 
+import io.github.epicvon2468.kmp_ge.core.interop.IntVar
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.GLFW
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.glfwBoolean
@@ -12,6 +13,7 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.GLFWMonitorC
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 
 @GLFW
@@ -252,6 +254,14 @@ actual inline fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demo
 actual inline fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int) =
 	glfw.glfwSetWindowSize(window.window, width, height)
 
+//
+
+@GLFW
+actual inline fun glfwGetFramebufferSize(window: GLFWWindow?, left: Ptr<IntVar>, top: Ptr<IntVar>) =
+	glfw.glfwGetFramebufferSize(window.window, left, top)
+
+//
+
 @GLFW
 actual inline fun glfwGetWindowOpacity(window: GLFWWindow?): Float = glfw.glfwGetWindowOpacity(window.window)
 
@@ -309,6 +319,33 @@ actual inline fun glfwSetWindowUserPointer(window: GLFWWindow?, pointer: Ptr<*>?
 
 @GLFW
 actual inline fun glfwGetWindowUserPointer(window: GLFWWindow?): Ptr<*>? = glfw.glfwGetWindowUserPointer(window.window)
+
+//
+
+@PublishedApi
+internal var _framebufferSizeCallbackWindow: GLFWWindow? = null
+
+@PublishedApi
+internal var _framebufferSizeCallback: GLFWFramebufferSizeFun? = null
+
+@PublishedApi
+internal fun __framebufferSizeCallback(window: CPointer<cnames.structs.GLFWwindow>?, width: Int, height: Int) {
+	require(_framebufferSizeCallbackWindow.window == window) { "Inequal GLFWwindow instances in framebufferSizeCallback!" }
+	_framebufferSizeCallback?.invoke(_framebufferSizeCallbackWindow, width, height)
+}
+
+@GLFW
+actual inline fun glfwSetFramebufferSizeCallback(window: GLFWWindow?, noinline callback: GLFWFramebufferSizeFun?) {
+	if (callback == null) {
+		glfw.glfwSetFramebufferSizeCallback(window.window, null)
+		_framebufferSizeCallback = null
+		_framebufferSizeCallbackWindow = null
+		return
+	}
+	_framebufferSizeCallback = callback
+	_framebufferSizeCallbackWindow = window
+	glfw.glfwSetFramebufferSizeCallback(window.window, staticCFunction(::__framebufferSizeCallback))
+}
 
 //
 
