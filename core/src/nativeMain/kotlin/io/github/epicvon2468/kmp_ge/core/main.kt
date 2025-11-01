@@ -13,6 +13,7 @@ import gl.GL_INVALID_ENUM
 import gl.GL_INVALID_FRAMEBUFFER_OPERATION
 import gl.GL_INVALID_OPERATION
 import gl.GL_INVALID_VALUE
+import gl.GL_LINK_STATUS
 import gl.GL_NO_ERROR
 import gl.GL_OUT_OF_MEMORY
 import gl.GL_STACK_OVERFLOW
@@ -79,6 +80,8 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.GLFW_CONTEXT_VERSIO
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.GLFW_OPENGL_PROFILE
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwWindowHint
 
+import kmp_ge.cMain
+
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.CFunction
@@ -115,13 +118,14 @@ import kmp_ge.loadGL
 fun checkCompile(
 	checker: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
 	infoLog: CPointer<CFunction<(UInt, Int, CPointer<IntVar>?, CPointer<ByteVar>?) -> Unit>>,
+	status: Int,
 	obj: GLuint,
 	name: String
 ) = memScoped {
 	val cStatus: IntVar = alloc()
-	checker.invoke(obj, GL_COMPILE_STATUS.toUInt(), cStatus.ptr)
+	checker.invoke(obj, status.toUInt(), cStatus.ptr)
 	val success = cStatus.value.glBoolean()
-	println("Obj '$name' ($obj) compile status: ${if (success) "success" else "failure"}.")
+	println("Obj '$name' ($obj) status: ${if (success) "success" else "failure"}.")
 	if (!success) {
 		println("Getting error log!")
 		val errorLog: CArrayPointer<ByteVar> = allocArray(512)
@@ -163,6 +167,8 @@ fun main() {
 	glfwGetVersion(version.refTo(0), version.refTo(1), version.refTo(2))
 	println("Version: ${version.contentToString()}")
 
+	cMain()
+
 	glfwMain()
 }
 
@@ -181,6 +187,7 @@ fun Int.glBoolean(): Boolean = when (this) {
 // https://www.opengl.org/sdk/
 // https://mesa3d.org/ (https://gitlab.freedesktop.org/mesa/mesa)
 // https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/2.2.hello_triangle_indexed/hello_triangle_indexed.cpp
+// https://antongerdelan.net/opengl/hellotriangle.html
 fun glfwMain(): Nothing {
 	// To test this, window hint GLFW_CONTEXT_VERSION_MAJOR and GLFW_CONTEXT_VERSION_MINOR to something absurd like 99.
 	glfwSetErrorCallback { errorCode: Int, description: String? ->
@@ -215,7 +222,6 @@ fun glfwMain(): Nothing {
 	// V-Sync.
 	glfwSwapInterval(1)
 
-	// WHY IN THE ACTUAL FUCK IS THIS NOT ON BY DEFAULT?!?!?!
 	glEnable!!.invoke(GL_DEBUG_OUTPUT.toUInt())
 	glEnable!!.invoke(GL_DEBUG_OUTPUT_SYNCHRONOUS.toUInt())
 
@@ -252,8 +258,7 @@ fun glfwMain(): Nothing {
 	glCompileShader!!.invoke(vertexShader)
 	checkGLError("glCompileShader vertex")
 
-	// Obj 'Vertex Shader' (1) compile status: success.
-	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, vertexShader, "Vertex Shader")
+	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, vertexShader, "Vertex Shader")
 	checkGLError("checkCompile vertex")
 
 	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
@@ -261,20 +266,16 @@ fun glfwMain(): Nothing {
 	glCompileShader!!.invoke(fragmentShader)
 	checkGLError("glCompileShader fragment")
 
-	// Obj 'Fragment Shader' (2) compile status: success.
-	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, fragmentShader, "Fragment Shader")
+	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, fragmentShader, "Fragment Shader")
 	checkGLError("checkCompile fragment")
 
-	// This is the failure point.
 	val program: GLuint = glCreateProgram!!.invoke()
 	glAttachShader!!.invoke(program, fragmentShader)
 	glAttachShader!!.invoke(program, vertexShader)
 	glLinkProgram!!.invoke(program)
 	checkGLError("glLinkProgram")
 
-	// Error only logs at this point
-	// Obj 'Shader Program' (3) compile status: failure.
-	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, program, "Shader Program")
+	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, GL_LINK_STATUS, program, "Shader Program")
 	checkGLError("checkCompile program")
 
 	val uTimeLocation: GLint = glGetUniformLocation_K(program, "time")

@@ -9,4 +9,6 @@ int glGetUniformLocation_K(unsigned int program, const char* name);
 
 bool loadGL();
 
+void cMain();
+
 #endif // KMP_GE_KMP_GE_H

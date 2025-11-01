@@ -119,6 +119,8 @@ kotlin {
 
 	if (current.isWindows) mingwX64(::configureNativeTargets)
 
+	if (current.isMacOsX) macosX64(::configureNativeTargets)
+
 	sourceSets {
 		commonMain.dependencies {
 			implementation(libs.kotlinx.coroutines.core)
