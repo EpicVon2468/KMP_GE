@@ -212,7 +212,7 @@ actual fun glfwSetWindowSizeLimits(
 ): Unit = TODO()
 
 @GLFW
-actual fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demon: Int): Unit = TODO()
+actual fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, denom: Int): Unit = TODO()
 
 @GLFW
 actual fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int): Unit = TODO()

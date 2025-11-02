@@ -9,12 +9,14 @@ import kotlinx.cinterop.allocPointerTo
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.CVariable
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.value
+import kotlinx.cinterop.refTo
 import kotlinx.cinterop.free
 import kotlinx.cinterop.ptr
 
@@ -32,8 +34,6 @@ actual typealias Var = CVariable
 
 actual typealias PtrVarOf<T> = CPointerVarOf<T>
 
-actual typealias Ptr<T> = CPointer<T>
-
 actual inline var <P : Ptr<*>> PtrVarOf<P>.value: P?
 	get() = this.value
 	set(value) { this.value = value }
@@ -44,15 +44,31 @@ actual inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T? 
 
 // START PRIMITIVE INT VARS
 
+// Int
+
 actual typealias IntVarOf<T> = kotlinx.cinterop.IntVarOf<T>
 
-actual var <T : Int> IntVarOf<T>.value: T
+actual inline var IntVar.value: Int
 	get() = this.value
-	set(value) {
-		this.value = value
-	}
+	set(value) { this.value = value }
+
+actual inline fun IntArray.refTo(index: Int): ValuesRef<IntVar> = this.refTo(index)
+
+// UInt
+
+actual typealias UIntVarOf<T> = kotlinx.cinterop.UIntVarOf<T>
+
+actual inline var UIntVar.value: UInt
+	get() = this.value
+	set(value) { this.value = value }
+
+actual inline fun UIntArray.refTo(index: Int): ValuesRef<UIntVar> = this.refTo(index)
 
 // END PRIMITIVE INT VARS
+
+actual typealias ValuesRef<T> = CValuesRef<T>
+
+actual typealias Ptr<T> = CPointer<T>
 
 actual typealias Mem = NativePlacement
 

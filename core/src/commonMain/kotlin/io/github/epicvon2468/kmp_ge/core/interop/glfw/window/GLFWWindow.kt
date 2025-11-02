@@ -3,6 +3,7 @@ package io.github.epicvon2468.kmp_ge.core.interop.glfw.window
 import io.github.epicvon2468.kmp_ge.core.interop.IntVar
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.GLFW
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
+import io.github.epicvon2468.kmp_ge.core.interop.ValuesRef
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.GLFWMonitor
 
 // https://www.glfw.org/docs/3.4/group__window.html
@@ -380,7 +381,7 @@ expect fun glfwSetWindowSizeLimits(
 )
 
 @GLFW
-expect fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demon: Int)
+expect fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, denom: Int)
 
 @GLFW
 expect fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int)
@@ -389,9 +390,8 @@ expect fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int)
 
 // void glfwGetWindowFrameSize(GLFWWindow *window, int *left, int *top, int *right, int *bottom)
 
-// TODO: Widen access from `Ptr<IntVar>` to `CValuesRef<IntVar>`
 @GLFW
-expect fun glfwGetFramebufferSize(window: GLFWWindow?, left: Ptr<IntVar>, top: Ptr<IntVar>)
+expect fun glfwGetFramebufferSize(window: GLFWWindow?, left: ValuesRef<IntVar>, top: ValuesRef<IntVar>)
 
 // void glfwGetWindowContentScale(GLFWWindow *window, float *xScale, float *yScale)
 

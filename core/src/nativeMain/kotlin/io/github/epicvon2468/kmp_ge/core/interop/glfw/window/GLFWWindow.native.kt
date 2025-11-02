@@ -5,13 +5,12 @@ package io.github.epicvon2468.kmp_ge.core.interop.glfw.window
 import io.github.epicvon2468.kmp_ge.core.interop.IntVar
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.GLFW
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
+import io.github.epicvon2468.kmp_ge.core.interop.ValuesRef
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.glfwBoolean
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.monitor
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.GLFWMonitor
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.monitor.GLFWMonitorC
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
@@ -179,19 +178,19 @@ actual const val GLFW_WAYLAND_APP_ID: Int = glfw.GLFW_WAYLAND_APP_ID
  * CInterop implementation of the [GLFWWindow] interface.
  */
 @GLFW
-data class GLFWWindowC(val window: CPointer<cnames.structs.GLFWwindow>) : GLFWWindow
+data class GLFWWindowC(val window: Ptr<cnames.structs.GLFWwindow>) : GLFWWindow
 
 @GLFW
-inline val GLFWWindow?.window: CPointer<cnames.structs.GLFWwindow>? get() = (this as? GLFWWindowC)?.window
+inline val GLFWWindow?.window: Ptr<cnames.structs.GLFWwindow>? get() = (this as? GLFWWindowC)?.window
 
 /**
  * CInterop implementation of the [GLFWImage] interface.
  */
 @GLFW
-data class GLFWImageC(val image: CValuesRef<glfw.GLFWimage>) : GLFWImage
+data class GLFWImageC(val image: ValuesRef<glfw.GLFWimage>) : GLFWImage
 
 @GLFW
-inline val GLFWImage?.image: CValuesRef<glfw.GLFWimage>? get() = (this as? GLFWImageC)?.image
+inline val GLFWImage?.image: ValuesRef<glfw.GLFWimage>? get() = (this as? GLFWImageC)?.image
 
 @GLFW
 actual inline fun glfwDefaultWindowHints() = glfw.glfwDefaultWindowHints()
@@ -247,8 +246,8 @@ actual inline fun glfwSetWindowSizeLimits(
 ) = glfw.glfwSetWindowSizeLimits(window.window, minWidth, minHeight, maxWidth, maxHeight)
 
 @GLFW
-actual inline fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, demon: Int) =
-	glfw.glfwSetWindowAspectRatio(window.window, numer, demon)
+actual inline fun glfwSetWindowAspectRatio(window: GLFWWindow?, numer: Int, denom: Int) =
+	glfw.glfwSetWindowAspectRatio(window.window, numer, denom)
 
 @GLFW
 actual inline fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int) =
@@ -257,7 +256,7 @@ actual inline fun glfwSetWindowSize(window: GLFWWindow?, width: Int, height: Int
 //
 
 @GLFW
-actual inline fun glfwGetFramebufferSize(window: GLFWWindow?, left: Ptr<IntVar>, top: Ptr<IntVar>) =
+actual inline fun glfwGetFramebufferSize(window: GLFWWindow?, left: ValuesRef<IntVar>, top: ValuesRef<IntVar>) =
 	glfw.glfwGetFramebufferSize(window.window, left, top)
 
 //
@@ -329,7 +328,7 @@ internal var _framebufferSizeCallbackWindow: GLFWWindow? = null
 internal var _framebufferSizeCallback: GLFWFramebufferSizeFun? = null
 
 @PublishedApi
-internal fun __framebufferSizeCallback(window: CPointer<cnames.structs.GLFWwindow>?, width: Int, height: Int) {
+internal fun __framebufferSizeCallback(window: Ptr<cnames.structs.GLFWwindow>?, width: Int, height: Int) {
 	require(_framebufferSizeCallbackWindow.window == window) { "Inequal GLFWwindow instances in framebufferSizeCallback!" }
 	_framebufferSizeCallback?.invoke(_framebufferSizeCallbackWindow, width, height)
 }

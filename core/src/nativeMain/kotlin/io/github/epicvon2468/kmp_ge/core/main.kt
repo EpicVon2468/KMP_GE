@@ -26,7 +26,6 @@ import gl.GLenum
 import gl.GLint
 import gl.GLsizei
 import gl.GLuint
-import gl.GLuintVar
 import gl.glAttachShader
 import gl.glBindBuffer
 import gl.glBindVertexArray
@@ -56,12 +55,20 @@ import glfw.GLFW_OPENGL_CORE_PROFILE
 import glfw.glfwGetTime
 import glfw.glfwGetVersion
 
+import io.github.epicvon2468.kmp_ge.core.interop.ArrayPtr
 import io.github.epicvon2468.kmp_ge.core.interop.exitProcess
 import io.github.epicvon2468.kmp_ge.core.interop.EXIT_SUCCESS
 import io.github.epicvon2468.kmp_ge.core.interop.EXIT_FAILURE
 import io.github.epicvon2468.kmp_ge.core.interop.HMem
 import io.github.epicvon2468.kmp_ge.core.interop.free
 import io.github.epicvon2468.kmp_ge.core.interop.alloc
+import io.github.epicvon2468.kmp_ge.core.interop.IntVar
+import io.github.epicvon2468.kmp_ge.core.interop.OpaquePtr
+import io.github.epicvon2468.kmp_ge.core.interop.Ptr
+import io.github.epicvon2468.kmp_ge.core.interop.UIntVar
+import io.github.epicvon2468.kmp_ge.core.interop.ptr
+import io.github.epicvon2468.kmp_ge.core.interop.value
+import io.github.epicvon2468.kmp_ge.core.interop.refTo
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.context.glfwSwapInterval
@@ -86,24 +93,17 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwWindowHint
 import kmp_ge.cMain
 
 import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CArrayPointer
 import kotlinx.cinterop.CFunction
-import kotlinx.cinterop.COpaquePointer
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
-import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
-import kotlinx.cinterop.refTo
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
-import kotlinx.cinterop.value
 
 import linearmaths.vec2
 
@@ -116,10 +116,10 @@ import kmp_ge.glShaderSource_K
 import kmp_ge.loadGL
 
 fun checkCompile(
-	checker: CPointer<CFunction<(UInt, UInt, CPointer<IntVar>?) -> Unit>>,
-	infoLog: CPointer<CFunction<(UInt, Int, CPointer<IntVar>?, CPointer<ByteVar>?) -> Unit>>,
+	checker: Ptr<CFunction<(UInt, UInt, Ptr<IntVar>?) -> Unit>>,
+	infoLog: Ptr<CFunction<(UInt, Int, Ptr<IntVar>?, ArrayPtr<ByteVar>?) -> Unit>>,
 	status: Int,
-	obj: GLuint,
+	obj: UInt,
 	name: String
 ) = memScoped {
 	val cStatus: IntVar = alloc()
@@ -128,7 +128,7 @@ fun checkCompile(
 	println("Obj '$name' ($obj) status: ${if (success) "success" else "failure"}.")
 	if (!success) {
 		println("Getting error log!")
-		val errorLog: CArrayPointer<ByteVar> = allocArray(512)
+		val errorLog: ArrayPtr<ByteVar> = allocArray(512)
 		infoLog.invoke(obj, 512, null, errorLog)
 		println("Error log: '${errorLog.toKString()}'")
 		//exitProcess(EXIT_FAILURE)
@@ -225,32 +225,32 @@ fun glfwMain(): Nothing {
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
 	glDebugMessageCallback!!.invoke(
-		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: CPointer<ByteVar>?, userParam: COpaquePointer? ->
+		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ArrayPtr<ByteVar>?, userParam: OpaquePtr? ->
 			println("GL debug callback invoked! Debug info:")
 			println("DebugProc {\n\tsource = $source,\n\ttype = $type,\n\tid = $id,\n\tseverity = $severity,\n\tlength = $length,\n\tmessage = '${message?.toKString()}',\n\tuserParam = $userParam\n}")
 		},
 		null
 	)
 
-	val vertices: CArrayPointer<FloatVar> = HMem.allocArrayOf(
+	val vertices: ArrayPtr<FloatVar> = HMem.allocArrayOf(
 		0.0f, 0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f
 	)
 
-	val vertexBuffer: GLuintVar = HMem.alloc()
+	val vertexBuffer: UIntVar = HMem.alloc()
 	glGenBuffers!!.invoke(1, vertexBuffer.ptr)
 	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 	glBufferData!!.invoke(GL_ARRAY_BUFFER.toUInt(), 9 * sizeOf<FloatVar>(), vertices, GL_STATIC_DRAW.toUInt())
 
-	val vertexArray: GLuintVar = HMem.alloc()
+	val vertexArray: UIntVar = HMem.alloc()
 	glGenVertexArrays!!.invoke(1, vertexArray.ptr)
 	glBindVertexArray!!.invoke(vertexArray.value)
 	glEnableVertexAttribArray!!.invoke(0U)
 	glBindBuffer!!.invoke(GL_ARRAY_BUFFER.toUInt(), vertexBuffer.value)
 	glVertexAttribPointer!!.invoke(0U, 3, GL_FLOAT.toUInt(), GL_FALSE.toUByte(), 0, null)
 
-	val vertexShader: GLuint = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
+	val vertexShader: UInt = glCreateShader!!.invoke(GL_VERTEX_SHADER.toUInt())
 	glShaderSource_K(vertexShader, 1, VERTEX_SHADER, null)
 	glCompileShader!!.invoke(vertexShader)
 	checkGLError("glCompileShader vertex")
@@ -258,7 +258,7 @@ fun glfwMain(): Nothing {
 	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, vertexShader, "Vertex Shader")
 	checkGLError("checkCompile vertex")
 
-	val fragmentShader: GLuint = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
+	val fragmentShader: UInt = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
 	glShaderSource_K(fragmentShader, 1, FRAGMENT_SHADER, null)
 	glCompileShader!!.invoke(fragmentShader)
 	checkGLError("glCompileShader fragment")
@@ -266,7 +266,7 @@ fun glfwMain(): Nothing {
 	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, fragmentShader, "Fragment Shader")
 	checkGLError("checkCompile fragment")
 
-	val program: GLuint = glCreateProgram!!.invoke()
+	val program: UInt = glCreateProgram!!.invoke()
 	glAttachShader!!.invoke(program, fragmentShader)
 	glAttachShader!!.invoke(program, vertexShader)
 	glLinkProgram!!.invoke(program)

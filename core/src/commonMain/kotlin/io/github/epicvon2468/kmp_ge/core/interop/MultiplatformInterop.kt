@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUnsignedTypes::class)
+@file:Suppress("FINAL_UPPER_BOUND")
 package io.github.epicvon2468.kmp_ge.core.interop
 
 expect open class NPtd
@@ -12,6 +14,8 @@ expect abstract class Var : Ptd
 
 // START POINTER VARS
 
+typealias OpaquePtr = Ptr<out Ptd>
+
 typealias PtrVar<T> = PtrVarOf<Ptr<T>>
 
 expect class PtrVarOf<T : Ptr<*>> : Var
@@ -24,15 +28,33 @@ expect inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T?
 
 // START PRIMITIVE INT VARS
 
+// Int
+
 typealias IntVar = IntVarOf<Int>
 
 expect class IntVarOf<T : Int> : Var
 
-expect var <T : Int> IntVarOf<T>.value: T
+expect var IntVar.value: Int
+
+expect fun IntArray.refTo(index: Int): ValuesRef<IntVar>
+
+// UInt
+
+typealias UIntVar = UIntVarOf<UInt>
+
+expect class UIntVarOf<T : UInt> : Var
+
+expect var UIntVar.value: UInt
+
+expect fun UIntArray.refTo(index: Int): ValuesRef<UIntVar>
 
 // END PRIMITIVE INT VARS
 
-expect class Ptr<T : Ptd>
+expect abstract class ValuesRef<T : Ptd>
+
+typealias ArrayPtr<T> = Ptr<T>
+
+expect class Ptr<T : Ptd> : ValuesRef<T>
 
 /**
  * Non-freeable (immutable) memory.
