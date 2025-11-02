@@ -63,12 +63,14 @@ import io.github.epicvon2468.kmp_ge.core.interop.HMem
 import io.github.epicvon2468.kmp_ge.core.interop.free
 import io.github.epicvon2468.kmp_ge.core.interop.alloc
 import io.github.epicvon2468.kmp_ge.core.interop.IntVar
+import io.github.epicvon2468.kmp_ge.core.interop.CString
 import io.github.epicvon2468.kmp_ge.core.interop.OpaquePtr
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
 import io.github.epicvon2468.kmp_ge.core.interop.UIntVar
 import io.github.epicvon2468.kmp_ge.core.interop.ptr
 import io.github.epicvon2468.kmp_ge.core.interop.value
 import io.github.epicvon2468.kmp_ge.core.interop.refTo
+import io.github.epicvon2468.kmp_ge.core.interop.sizeOf
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.context.glfwSwapInterval
@@ -92,7 +94,6 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwWindowHint
 
 import kmp_ge.cMain
 
-import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
@@ -101,7 +102,6 @@ import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toKString
 
@@ -117,7 +117,7 @@ import kmp_ge.loadGL
 
 fun checkCompile(
 	checker: Ptr<CFunction<(UInt, UInt, Ptr<IntVar>?) -> Unit>>,
-	infoLog: Ptr<CFunction<(UInt, Int, Ptr<IntVar>?, ArrayPtr<ByteVar>?) -> Unit>>,
+	infoLog: Ptr<CFunction<(UInt, Int, Ptr<IntVar>?, CString?) -> Unit>>,
 	status: Int,
 	obj: UInt,
 	name: String
@@ -128,7 +128,7 @@ fun checkCompile(
 	println("Obj '$name' ($obj) status: ${if (success) "success" else "failure"}.")
 	if (!success) {
 		println("Getting error log!")
-		val errorLog: ArrayPtr<ByteVar> = allocArray(512)
+		val errorLog: CString = allocArray(512)
 		infoLog.invoke(obj, 512, null, errorLog)
 		println("Error log: '${errorLog.toKString()}'")
 		//exitProcess(EXIT_FAILURE)
@@ -225,7 +225,7 @@ fun glfwMain(): Nothing {
 	println("OpenGL shader language version: ${glGetString(GL_SHADING_LANGUAGE_VERSION)}")
 
 	glDebugMessageCallback!!.invoke(
-		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: ArrayPtr<ByteVar>?, userParam: OpaquePtr? ->
+		staticCFunction { source: GLenum, type: GLenum, id: GLuint, severity: GLenum, length: GLsizei, message: CString?, userParam: OpaquePtr? ->
 			println("GL debug callback invoked! Debug info:")
 			println("DebugProc {\n\tsource = $source,\n\ttype = $type,\n\tid = $id,\n\tseverity = $severity,\n\tlength = $length,\n\tmessage = '${message?.toKString()}',\n\tuserParam = $userParam\n}")
 		},

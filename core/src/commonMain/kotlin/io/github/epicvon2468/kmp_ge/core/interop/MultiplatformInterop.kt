@@ -12,6 +12,10 @@ expect inline val <reified T : Ptd> Ptr<T>.pointed: T
 
 expect abstract class Var : Ptd
 
+expect inline fun <reified T : Var> sizeOf(): Long
+
+expect inline fun <reified T : Var> alignOf(): Int
+
 // START POINTER VARS
 
 typealias OpaquePtr = Ptr<out Ptd>
@@ -25,6 +29,32 @@ expect inline var <P : Ptr<*>> PtrVarOf<P>.value: P?
 expect inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T?
 
 // END POINTER VARS
+
+// START PRIMITIVE BYTE VARS
+
+// Byte
+
+typealias CString = ArrayPtr<ByteVar>
+
+typealias ByteVar = ByteVarOf<Byte>
+
+expect class ByteVarOf<T : Byte> : Var
+
+expect var ByteVar.value: Byte
+
+expect fun ByteArray.refTo(index: Int): ValuesRef<ByteVar>
+
+// UByte
+
+typealias UByteVar = UByteVarOf<UByte>
+
+expect class UByteVarOf<T : UByte> : Var
+
+expect var UByteVar.value: UByte
+
+expect fun UByteArray.refTo(index: Int): ValuesRef<UByteVar>
+
+// END PRIMITIVE BYTE VARS
 
 // START PRIMITIVE INT VARS
 

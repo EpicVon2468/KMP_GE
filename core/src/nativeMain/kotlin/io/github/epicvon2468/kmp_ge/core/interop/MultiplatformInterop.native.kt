@@ -14,6 +14,8 @@ import kotlinx.cinterop.CVariable
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.pointed
+import kotlinx.cinterop.alignOf
+import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.value
 import kotlinx.cinterop.refTo
@@ -30,6 +32,10 @@ actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = this.pointed
 
 actual typealias Var = CVariable
 
+actual inline fun <reified T : Var> sizeOf(): Long = sizeOf<T>()
+
+actual inline fun <reified T : Var> alignOf(): Int = alignOf<T>()
+
 // START POINTER VARS
 
 actual typealias PtrVarOf<T> = CPointerVarOf<T>
@@ -41,6 +47,30 @@ actual inline var <P : Ptr<*>> PtrVarOf<P>.value: P?
 actual inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T? get() = this.pointed
 
 // END POINTER VARS
+
+// START PRIMITIVE BYTE VARS
+
+// Byte
+
+actual typealias ByteVarOf<T> = kotlinx.cinterop.ByteVarOf<T>
+
+actual inline var ByteVar.value: Byte
+	get() = this.value
+	set(value) { this.value = value }
+
+actual inline fun ByteArray.refTo(index: Int): ValuesRef<ByteVar> = this.refTo(index)
+
+// UByte
+
+actual typealias UByteVarOf<T> = kotlinx.cinterop.UByteVarOf<T>
+
+actual inline var UByteVar.value: UByte
+	get() = this.value
+	set(value) { this.value = value }
+
+actual inline fun UByteArray.refTo(index: Int): ValuesRef<UByteVar> = this.refTo(index)
+
+// END PRIMITIVE BYTE VARS
 
 // START PRIMITIVE INT VARS
 
