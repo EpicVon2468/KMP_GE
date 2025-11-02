@@ -12,6 +12,12 @@ actual inline val <T : Ptd> T.ptr: Ptr<T> get() = TODO()
 
 actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = TODO()
 
+actual fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T> = TODO()
+
+actual fun <T : Ptd> Ptr<T>?.toLong(): Long = TODO()
+
+actual fun <T : Ptd> Long.toPtr(): Ptr<T>? = TODO()
+
 actual abstract class Var : Ptd()
 
 actual inline fun <reified T : Var> sizeOf(): Long = TODO()

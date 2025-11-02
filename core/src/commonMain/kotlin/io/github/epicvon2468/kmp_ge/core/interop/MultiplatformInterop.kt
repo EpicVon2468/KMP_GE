@@ -10,6 +10,13 @@ expect val <T : Ptd> T.ptr: Ptr<T>
 
 expect inline val <reified T : Ptd> Ptr<T>.pointed: T
 
+// Make this just be an inline cast on JVM if possible.
+expect fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T>
+
+expect fun <T : Ptd> Ptr<T>?.toLong(): Long
+
+expect fun <T : Ptd> Long.toPtr(): Ptr<T>?
+
 expect abstract class Var : Ptd
 
 expect inline fun <reified T : Var> sizeOf(): Long

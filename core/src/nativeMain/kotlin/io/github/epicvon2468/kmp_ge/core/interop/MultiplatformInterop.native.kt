@@ -9,8 +9,10 @@ import kotlinx.cinterop.allocPointerTo
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.allocArrayOf
+import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.toCPointer
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.CVariable
 import kotlinx.cinterop.toKString
@@ -19,6 +21,7 @@ import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.alignOf
 import kotlinx.cinterop.sizeOf
+import kotlinx.cinterop.toLong
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.value
 import kotlinx.cinterop.refTo
@@ -32,6 +35,12 @@ actual typealias Ptd = CPointed
 actual inline val <T : Ptd> T.ptr: Ptr<T> get() = this.ptr
 
 actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = this.pointed
+
+actual fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T> = this.reinterpret()
+
+actual fun <T : Ptd> Ptr<T>?.toLong(): Long = this.toLong()
+
+actual fun <T : Ptd> Long.toPtr(): Ptr<T>? = this.toCPointer()
 
 actual typealias Var = CVariable
 
