@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
-@file:Suppress("FINAL_UPPER_BOUND")
+@file:Suppress("FINAL_UPPER_BOUND", "NOTHING_TO_INLINE")
 package io.github.epicvon2468.kmp_ge.core.interop
 
 expect open class NPtd
@@ -116,9 +116,13 @@ expect interface FMem : Mem
 
 expect fun Mem.alloc(size: Long, align: Int): NPtd
 
-fun Mem.alloc(size: Int, align: Int): NPtd = this.alloc(size.toLong(), align)
+inline fun Mem.alloc(size: Int, align: Int): NPtd = this.alloc(size.toLong(), align)
 
 expect inline fun <reified T : Var> Mem.alloc(): T
+
+expect inline fun <reified T : Var> Mem.allocArray(length: Long): ArrayPtr<T>
+
+inline fun <reified T : Var> Mem.allocArray(length: Int): ArrayPtr<T> = this.allocArray(length.toLong())
 
 expect fun Mem.allocArrayOf(vararg elements: Float): ArrayPtr<FloatVar>
 

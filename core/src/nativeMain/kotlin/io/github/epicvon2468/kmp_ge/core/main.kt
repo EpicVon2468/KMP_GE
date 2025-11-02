@@ -73,6 +73,7 @@ import io.github.epicvon2468.kmp_ge.core.interop.ptr
 import io.github.epicvon2468.kmp_ge.core.interop.value
 import io.github.epicvon2468.kmp_ge.core.interop.refTo
 import io.github.epicvon2468.kmp_ge.core.interop.sizeOf
+import io.github.epicvon2468.kmp_ge.core.interop.allocArray
 import io.github.epicvon2468.kmp_ge.core.interop.allocArrayOf
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
@@ -99,13 +100,10 @@ import kmp_ge.cMain
 
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.staticCFunction
-
-import linearmaths.vec2
 
 import platform.posix._IONBF
 import platform.posix.setvbuf
