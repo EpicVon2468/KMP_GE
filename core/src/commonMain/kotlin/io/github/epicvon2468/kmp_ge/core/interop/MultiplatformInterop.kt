@@ -120,6 +120,8 @@ fun Mem.alloc(size: Int, align: Int): NPtd = this.alloc(size.toLong(), align)
 
 expect inline fun <reified T : Var> Mem.alloc(): T
 
+expect fun Mem.allocArrayOf(vararg elements: Float): ArrayPtr<FloatVar>
+
 expect fun <T : Ptd> Mem.allocPtrTo(): PtrVarOf<Ptr<T>>
 
 expect fun FMem.free(ptr: Ptr<*>)

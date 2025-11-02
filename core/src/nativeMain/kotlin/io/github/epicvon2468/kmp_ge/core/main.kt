@@ -73,6 +73,7 @@ import io.github.epicvon2468.kmp_ge.core.interop.ptr
 import io.github.epicvon2468.kmp_ge.core.interop.value
 import io.github.epicvon2468.kmp_ge.core.interop.refTo
 import io.github.epicvon2468.kmp_ge.core.interop.sizeOf
+import io.github.epicvon2468.kmp_ge.core.interop.allocArrayOf
 import io.github.epicvon2468.kmp_ge.core.interop.gl.glGetString
 import io.github.epicvon2468.kmp_ge.core.interop.gl.GL_SHADING_LANGUAGE_VERSION
 import io.github.epicvon2468.kmp_ge.core.interop.glfw.context.glfwSwapInterval
@@ -99,7 +100,6 @@ import kmp_ge.cMain
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
@@ -156,7 +156,7 @@ fun main() {
 	// Auto flush (no buffer)
 	setvbuf(stdout, null, _IONBF, 0U)
 
-	val vec2: vec2 = HMem.allocArrayOf(-0.6f, -0.4f)
+	val vec2: ArrayPtr<FloatVar> = HMem.allocArrayOf(-0.6f, -0.4f)
 	require(vec2[0] == -0.6f)
 	require(vec2[1] == -0.4f)
 	HMem.free(vec2)

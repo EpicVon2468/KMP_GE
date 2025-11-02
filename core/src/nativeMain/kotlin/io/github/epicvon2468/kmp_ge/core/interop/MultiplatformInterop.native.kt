@@ -8,6 +8,7 @@ import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.allocPointerTo
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.CPointerVarOf
+import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.CVariable
@@ -126,6 +127,8 @@ actual typealias FMem = NativeFreeablePlacement
 actual inline fun Mem.alloc(size: Long, align: Int): NPtd = this.alloc(size, align)
 
 actual inline fun <reified T : Var> Mem.alloc(): T = this.alloc()
+
+actual fun Mem.allocArrayOf(vararg elements: Float): ArrayPtr<FloatVar> = this.allocArrayOf(*elements)
 
 actual inline fun <T : Ptd> Mem.allocPtrTo(): PtrVarOf<Ptr<T>> = this.allocPointerTo()
 
