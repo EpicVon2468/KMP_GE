@@ -36,6 +36,8 @@ expect inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T?
 
 typealias CString = ArrayPtr<ByteVar>
 
+expect fun CString.toKString(): String
+
 typealias ByteVar = ByteVarOf<Byte>
 
 expect class ByteVarOf<T : Byte> : Var
@@ -79,6 +81,22 @@ expect var UIntVar.value: UInt
 expect fun UIntArray.refTo(index: Int): ValuesRef<UIntVar>
 
 // END PRIMITIVE INT VARS
+
+// START PRIMITIVE FLOAT VARS
+
+// Float
+
+typealias FloatVar = FloatVarOf<Float>
+
+expect class FloatVarOf<T : Float> : Var
+
+expect var FloatVar.value: Float
+
+expect fun FloatArray.refTo(index: Int): ValuesRef<FloatVar>
+
+// There is no UFloat (in ba sing se)
+
+// END PRIMITIVE FLOAT VARS
 
 expect abstract class ValuesRef<T : Ptd>
 

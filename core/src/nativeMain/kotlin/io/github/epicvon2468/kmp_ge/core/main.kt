@@ -67,6 +67,8 @@ import io.github.epicvon2468.kmp_ge.core.interop.CString
 import io.github.epicvon2468.kmp_ge.core.interop.OpaquePtr
 import io.github.epicvon2468.kmp_ge.core.interop.Ptr
 import io.github.epicvon2468.kmp_ge.core.interop.UIntVar
+import io.github.epicvon2468.kmp_ge.core.interop.FloatVar
+import io.github.epicvon2468.kmp_ge.core.interop.toKString
 import io.github.epicvon2468.kmp_ge.core.interop.ptr
 import io.github.epicvon2468.kmp_ge.core.interop.value
 import io.github.epicvon2468.kmp_ge.core.interop.refTo
@@ -96,14 +98,12 @@ import kmp_ge.cMain
 
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.FloatVar
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.staticCFunction
-import kotlinx.cinterop.toKString
 
 import linearmaths.vec2
 

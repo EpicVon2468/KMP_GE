@@ -11,6 +11,7 @@ import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.CVariable
+import kotlinx.cinterop.toKString
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.pointed
@@ -51,6 +52,8 @@ actual inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T? 
 // START PRIMITIVE BYTE VARS
 
 // Byte
+
+actual fun CString.toKString(): String = this.toKString()
 
 actual typealias ByteVarOf<T> = kotlinx.cinterop.ByteVarOf<T>
 
@@ -95,6 +98,22 @@ actual inline var UIntVar.value: UInt
 actual inline fun UIntArray.refTo(index: Int): ValuesRef<UIntVar> = this.refTo(index)
 
 // END PRIMITIVE INT VARS
+
+// START PRIMITIVE FLOAT VARS
+
+// Float
+
+actual typealias FloatVarOf<T> = kotlinx.cinterop.FloatVarOf<T>
+
+actual inline var FloatVar.value: Float
+	get() = this.value
+	set(value) { this.value = value }
+
+actual inline fun FloatArray.refTo(index: Int): ValuesRef<FloatVar> = this.refTo(index)
+
+// There is no UFloat (in ba sing se)
+
+// END PRIMITIVE FLOAT VARS
 
 actual typealias ValuesRef<T> = CValuesRef<T>
 
