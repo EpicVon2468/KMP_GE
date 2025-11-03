@@ -10,6 +10,22 @@ expect val <T : Ptd> T.ptr: Ptr<T>
 
 expect inline val <reified T : Ptd> Ptr<T>.pointed: T
 
+expect inline operator fun <reified T : Var> Ptr<T>.get(index: Long): T
+
+inline operator fun <reified T : Var> Ptr<T>.get(index: Int): T = this[index.toLong()]
+
+expect inline operator fun <reified T : PtrVarOf<*>> Ptr<T>?.plus(index: Long): Ptr<T>?
+
+inline operator fun <reified T : PtrVarOf<*>> Ptr<T>?.plus(index: Int): Ptr<T>? = this + index.toLong()
+
+inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.get(index: Long): T? = (this + index)!!.pointed.value
+
+inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.get(index: Int): T? = this[index.toLong()]
+
+inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.set(index: Long, value: T?) { (this + index)!!.pointed.value = value }
+
+inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.set(index: Int, value: T?) { this[index.toLong()] = value }
+
 // Make this just be an inline cast on JVM if possible.
 expect fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T>
 
@@ -49,7 +65,7 @@ typealias ByteVar = ByteVarOf<Byte>
 
 expect class ByteVarOf<T : Byte> : Var
 
-expect var ByteVar.value: Byte
+expect var <T : Byte> ByteVarOf<T >.value: T
 
 expect fun ByteArray.refTo(index: Int): ValuesRef<ByteVar>
 
@@ -59,7 +75,7 @@ typealias UByteVar = UByteVarOf<UByte>
 
 expect class UByteVarOf<T : UByte> : Var
 
-expect var UByteVar.value: UByte
+expect var <T : UByte> UByteVarOf<T>.value: T
 
 expect fun UByteArray.refTo(index: Int): ValuesRef<UByteVar>
 
@@ -73,7 +89,7 @@ typealias IntVar = IntVarOf<Int>
 
 expect class IntVarOf<T : Int> : Var
 
-expect var IntVar.value: Int
+expect var <T : Int> IntVarOf<T>.value: T
 
 expect fun IntArray.refTo(index: Int): ValuesRef<IntVar>
 
@@ -83,7 +99,7 @@ typealias UIntVar = UIntVarOf<UInt>
 
 expect class UIntVarOf<T : UInt> : Var
 
-expect var UIntVar.value: UInt
+expect var <T : UInt> UIntVarOf<T>.value: T
 
 expect fun UIntArray.refTo(index: Int): ValuesRef<UIntVar>
 
@@ -97,7 +113,7 @@ typealias FloatVar = FloatVarOf<Float>
 
 expect class FloatVarOf<T : Float> : Var
 
-expect var FloatVar.value: Float
+expect var <T : Float> FloatVarOf<T>.value: T
 
 expect fun FloatArray.refTo(index: Int): ValuesRef<FloatVar>
 

@@ -1,5 +1,5 @@
 @file:OptIn(ExperimentalForeignApi::class)
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "FINAL_UPPER_BOUND")
 package io.github.epicvon2468.kmp_ge.core.interop
 
 import kotlinx.cinterop.NativeFreeablePlacement
@@ -26,6 +26,8 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.value
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.free
+import kotlinx.cinterop.plus
+import kotlinx.cinterop.get
 import kotlinx.cinterop.ptr
 
 actual typealias NPtd = NativePointed
@@ -36,11 +38,15 @@ actual inline val <T : Ptd> T.ptr: Ptr<T> get() = this.ptr
 
 actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = this.pointed
 
-actual fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T> = this.reinterpret()
+actual inline operator fun <reified T : Var> Ptr<T>.get(index: Long): T = this[index]
 
-actual fun <T : Ptd> Ptr<T>?.toLong(): Long = this.toLong()
+actual inline operator fun <reified T : PtrVarOf<*>> Ptr<T>?.plus(index: Long): Ptr<T>? = this + index
 
-actual fun <T : Ptd> Long.toPtr(): Ptr<T>? = this.toCPointer()
+actual inline fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T> = this.reinterpret()
+
+actual inline fun <T : Ptd> Ptr<T>?.toLong(): Long = this.toLong()
+
+actual inline fun <T : Ptd> Long.toPtr(): Ptr<T>? = this.toCPointer()
 
 actual typealias Var = CVariable
 
@@ -64,11 +70,11 @@ actual inline val <reified T : Ptd, reified P : Ptr<T>> PtrVarOf<P>.pointed: T? 
 
 // Byte
 
-actual fun CString.toKString(): String = this.toKString()
+actual inline fun CString.toKString(): String = this.toKString()
 
 actual typealias ByteVarOf<T> = kotlinx.cinterop.ByteVarOf<T>
 
-actual inline var ByteVar.value: Byte
+actual inline var <T : Byte> ByteVarOf<T>.value: T
 	get() = this.value
 	set(value) { this.value = value }
 
@@ -78,7 +84,7 @@ actual inline fun ByteArray.refTo(index: Int): ValuesRef<ByteVar> = this.refTo(i
 
 actual typealias UByteVarOf<T> = kotlinx.cinterop.UByteVarOf<T>
 
-actual inline var UByteVar.value: UByte
+actual inline var <T : UByte> UByteVarOf<T>.value: T
 	get() = this.value
 	set(value) { this.value = value }
 
@@ -92,7 +98,7 @@ actual inline fun UByteArray.refTo(index: Int): ValuesRef<UByteVar> = this.refTo
 
 actual typealias IntVarOf<T> = kotlinx.cinterop.IntVarOf<T>
 
-actual inline var IntVar.value: Int
+actual inline var <T : Int> IntVarOf<T>.value: T
 	get() = this.value
 	set(value) { this.value = value }
 
@@ -102,7 +108,7 @@ actual inline fun IntArray.refTo(index: Int): ValuesRef<IntVar> = this.refTo(ind
 
 actual typealias UIntVarOf<T> = kotlinx.cinterop.UIntVarOf<T>
 
-actual inline var UIntVar.value: UInt
+actual inline var <T : UInt> UIntVarOf<T>.value: T
 	get() = this.value
 	set(value) { this.value = value }
 
@@ -116,7 +122,7 @@ actual inline fun UIntArray.refTo(index: Int): ValuesRef<UIntVar> = this.refTo(i
 
 actual typealias FloatVarOf<T> = kotlinx.cinterop.FloatVarOf<T>
 
-actual inline var FloatVar.value: Float
+actual inline var <T : Float> FloatVarOf<T>.value: T
 	get() = this.value
 	set(value) { this.value = value }
 

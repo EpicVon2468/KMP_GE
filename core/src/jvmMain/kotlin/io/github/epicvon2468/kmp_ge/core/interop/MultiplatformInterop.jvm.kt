@@ -4,6 +4,8 @@ package io.github.epicvon2468.kmp_ge.core.interop
 // TODO: https://stackoverflow.com/questions/1632367/passing-pointers-between-c-and-java-through-jni
 // 	There's a CInterop function for getting pointers by long and turning them to long as well.
 
+// Additionally, check out: https://docs.oracle.com/en/java/javase/21/core/foreign-function-and-memory-api.html (jvm 21+)
+
 actual open class NPtd
 
 actual abstract class Ptd : NPtd()
