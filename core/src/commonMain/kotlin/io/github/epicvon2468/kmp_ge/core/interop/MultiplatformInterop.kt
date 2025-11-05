@@ -6,6 +6,11 @@ expect open class NPtd
 
 expect abstract class Ptd : NPtd
 
+/**
+ * Native pointer
+ */
+expect class NPtr
+
 expect val <T : Ptd> T.ptr: Ptr<T>
 
 expect inline val <reified T : Ptd> Ptr<T>.pointed: T
@@ -25,6 +30,10 @@ inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.get(index: Int): T? = this[ind
 inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.set(index: Long, value: T?) { (this + index)!!.pointed.value = value }
 
 inline operator fun <T : Ptr<*>> Ptr<PtrVarOf<T>>.set(index: Int, value: T?) { this[index.toLong()] = value }
+
+expect val NULL: NPtr
+
+expect val Ptr<*>?.rawValue: NPtr
 
 // Make this just be an inline cast on JVM if possible.
 expect fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T>
@@ -65,7 +74,7 @@ typealias ByteVar = ByteVarOf<Byte>
 
 expect class ByteVarOf<T : Byte> : Var
 
-expect var <T : Byte> ByteVarOf<T >.value: T
+expect var <T : Byte> ByteVarOf<T>.value: T
 
 expect fun ByteArray.refTo(index: Int): ValuesRef<ByteVar>
 

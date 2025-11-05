@@ -2,10 +2,13 @@
 @file:Suppress("NOTHING_TO_INLINE", "FINAL_UPPER_BOUND")
 package io.github.epicvon2468.kmp_ge.core.interop
 
+import kotlin.native.internal.NativePtr
+
 import kotlinx.cinterop.NativeFreeablePlacement
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.NativePlacement
 import kotlinx.cinterop.allocPointerTo
+import kotlinx.cinterop.nativeNullPtr
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.CPointerVarOf
 import kotlinx.cinterop.allocArrayOf
@@ -16,6 +19,7 @@ import kotlinx.cinterop.toCPointer
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.CVariable
 import kotlinx.cinterop.toKString
+import kotlinx.cinterop.rawValue
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.pointed
@@ -34,6 +38,8 @@ actual typealias NPtd = NativePointed
 
 actual typealias Ptd = CPointed
 
+actual typealias NPtr = NativePtr
+
 actual inline val <T : Ptd> T.ptr: Ptr<T> get() = this.ptr
 
 actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = this.pointed
@@ -41,6 +47,10 @@ actual inline val <reified T : Ptd> Ptr<T>.pointed: T get() = this.pointed
 actual inline operator fun <reified T : Var> Ptr<T>.get(index: Long): T = this[index]
 
 actual inline operator fun <reified T : PtrVarOf<*>> Ptr<T>?.plus(index: Long): Ptr<T>? = this + index
+
+actual val NULL: NPtr = nativeNullPtr
+
+actual inline val Ptr<*>?.rawValue: NPtr get() = this.rawValue
 
 actual inline fun <T : Ptd> Ptr<*>.reinterpret(): Ptr<T> = this.reinterpret()
 

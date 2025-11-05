@@ -70,6 +70,7 @@ import io.github.epicvon2468.kmp_ge.core.interop.UIntVar
 import io.github.epicvon2468.kmp_ge.core.interop.FloatVar
 import io.github.epicvon2468.kmp_ge.core.interop.toKString
 import io.github.epicvon2468.kmp_ge.core.interop.ptr
+import io.github.epicvon2468.kmp_ge.core.interop.get
 import io.github.epicvon2468.kmp_ge.core.interop.value
 import io.github.epicvon2468.kmp_ge.core.interop.refTo
 import io.github.epicvon2468.kmp_ge.core.interop.sizeOf
@@ -98,9 +99,7 @@ import io.github.epicvon2468.kmp_ge.core.interop.glfw.window.glfwWindowHint
 
 import kmp_ge.cMain
 
-import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.staticCFunction
@@ -114,20 +113,20 @@ import kmp_ge.glShaderSource_K
 import kmp_ge.loadGL
 
 fun checkCompile(
-	checker: Ptr<CFunction<(UInt, UInt, Ptr<IntVar>?) -> Unit>>,
-	infoLog: Ptr<CFunction<(UInt, Int, Ptr<IntVar>?, CString?) -> Unit>>,
+	checker: (UInt, UInt, Ptr<IntVar>?) -> Unit,
+	infoLog: (UInt, Int, Ptr<IntVar>?, CString?) -> Unit,
 	status: Int,
 	obj: UInt,
 	name: String
 ) = memScoped {
 	val cStatus: IntVar = alloc()
-	checker.invoke(obj, status.toUInt(), cStatus.ptr)
+	checker(obj, status.toUInt(), cStatus.ptr)
 	val success = cStatus.value.glBoolean()
 	println("Obj '$name' ($obj) status: ${if (success) "success" else "failure"}.")
 	if (!success) {
 		println("Getting error log!")
 		val errorLog: CString = allocArray(512)
-		infoLog.invoke(obj, 512, null, errorLog)
+		infoLog(obj, 512, null, errorLog)
 		println("Error log: '${errorLog.toKString()}'")
 		//exitProcess(EXIT_FAILURE)
 	}
@@ -253,7 +252,7 @@ fun glfwMain(): Nothing {
 	glCompileShader!!.invoke(vertexShader)
 	checkGLError("glCompileShader vertex")
 
-	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, vertexShader, "Vertex Shader")
+	checkCompile(glGetShaderiv!!::invoke, glGetShaderInfoLog!!::invoke, GL_COMPILE_STATUS, vertexShader, "Vertex Shader")
 	checkGLError("checkCompile vertex")
 
 	val fragmentShader: UInt = glCreateShader!!.invoke(GL_FRAGMENT_SHADER.toUInt())
@@ -261,7 +260,7 @@ fun glfwMain(): Nothing {
 	glCompileShader!!.invoke(fragmentShader)
 	checkGLError("glCompileShader fragment")
 
-	checkCompile(glGetShaderiv!!, glGetShaderInfoLog!!, GL_COMPILE_STATUS, fragmentShader, "Fragment Shader")
+	checkCompile(glGetShaderiv!!::invoke, glGetShaderInfoLog!!::invoke, GL_COMPILE_STATUS, fragmentShader, "Fragment Shader")
 	checkGLError("checkCompile fragment")
 
 	val program: UInt = glCreateProgram!!.invoke()
@@ -270,7 +269,7 @@ fun glfwMain(): Nothing {
 	glLinkProgram!!.invoke(program)
 	checkGLError("glLinkProgram")
 
-	checkCompile(glGetProgramiv!!, glGetProgramInfoLog!!, GL_LINK_STATUS, program, "Shader Program")
+	checkCompile(glGetProgramiv!!::invoke, glGetProgramInfoLog!!::invoke, GL_LINK_STATUS, program, "Shader Program")
 	checkGLError("checkCompile program")
 
 	val uTimeLocation: GLint = glGetUniformLocation_K(program, "time")
