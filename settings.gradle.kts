@@ -12,6 +12,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
-// TODO: Move glfw interop to a separate module?
-include(":core")

@@ -16,7 +16,7 @@ Pods/
 *yarn.lock
 cmake-build-debug/
 
-core/src/nativeMain/kotlin/io/github/epicvon2468/kmp_ge/core/Shaders.kt
+src/nativeMain/kotlin/io/github/epicvon2468/kmp_ge/core/Shaders.kt
 
 # These need hardcoding within them to work, so they're generated with a gradle task instead of manual edits.
 **/gl.def
