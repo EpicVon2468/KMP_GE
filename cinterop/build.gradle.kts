@@ -1,6 +1,9 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+//import java.nio.file.FileSystems
+//import kotlin.io.path.readText
+//import kotlin.io.path.writeText
 
 plugins {
 	alias(libs.plugins.kotlin.multiplatform)
@@ -9,6 +12,22 @@ plugins {
 
 group = "io.github.epicvon2468.cinterop"
 version = "0.0.0"
+
+// This is how difficult it is to edit the jar manifest properly. I have tried everything.
+
+//tasks.register("fixJarManifest") {
+//	doFirst {
+//		println("Fixing jar manifest")
+//		println("User dir: '${System.getProperty("user.dir")}'")
+//		val file = File(System.getProperty("user.dir")).resolve("build/libs/cinterop-jvm-0.0.0.jar")
+//		val fs = FileSystems.newFileSystem(file.toPath())
+//		val manifest = fs.getPath("META-INF", "MANIFEST.MF")
+//		manifest.writeText(manifest.readText().trim() + "\nMain-Class: io.github.epicvon2468.cinterop.MainKt\n\n\n")
+//		fs.close()
+//	}
+//}
+//
+//tasks.getByName("build").finalizedBy("fixJarManifest")
 
 fun configureNativeTargets(it: KotlinNativeTargetWithHostTests) = with(it) {
 	binaries {
@@ -50,7 +69,7 @@ kotlin {
 buildkonfig {
 	// BuildKonfig configuration here.
 	// https://github.com/yshrsmz/BuildKonfig#gradle-configuration
-	packageName = "io.github.epicvon2468.kmp_ge.cinterop"
+	packageName = "io.github.epicvon2468.cinterop"
 	exposeObjectWithName = "Info"
 	defaultConfigs {
 		buildConfigField(FieldSpec.Type.STRING, "VERSION", version.toString())
