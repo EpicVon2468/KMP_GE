@@ -56,7 +56,9 @@ kotlin {
 	sourceSets {
 		commonMain.dependencies {}
 
-		jvmMain.dependencies {}
+		jvmMain.dependencies {
+			implementation(kotlin("reflect"))
+		}
 
 		commonTest.dependencies {
 			implementation(kotlin("test"))
